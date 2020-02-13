@@ -106,14 +106,15 @@ class Runner(object):
         """
         print(('Finished Epoch {epoch} || Run Time: {runtime:6.1f} | '
                'Load Time: {datatime:6.1f} || F1: {f1:6.2f} | Prec: {prec:6.2f} | '
-               'Rec: {rec:6.2f} || Ex/s: {eps:6.2f}\n').format(
+               'Rec: {rec:6.2f} || Ex/s: {eps:6.2f} || Loss: {loss:7.4f}\n').format(
                    epoch=epoch,
                    runtime=runtime,
                    datatime=datatime,
                    f1=stats.f1(),
                    prec=stats.precision(),
                    rec=stats.recall(),
-                   eps=stats.examples_per_sec()))
+                   eps=stats.examples_per_sec(),
+                   loss=stats.loss()))
 
     @staticmethod
     def _set_pbar_status(pbar, stats, cum_stats):

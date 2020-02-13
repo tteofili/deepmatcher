@@ -61,7 +61,7 @@ def _make_fields(header, id_attr, label_attr, ignore_columns, lower, tokenize,
         batch_first=True,
         include_lengths=include_lengths)
     numeric_field = MatchingField(
-        sequential=False, preprocessing=lambda x: int(x), use_vocab=False)
+        sequential=False, preprocessing=lambda x: float(x), use_vocab=False)
     id_field = MatchingField(sequential=False, use_vocab=False, id=True)
 
     fields = []

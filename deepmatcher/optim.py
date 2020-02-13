@@ -50,8 +50,8 @@ class SoftNLLLoss(nn.NLLLoss):
         one_hot.fill_(self.label_smoothing / (self.num_classes - 1))
         one_hot.scatter_(1, target.unsqueeze(1).long(), self.confidence)
 
-        if self.weight is not None:
-            one_hot.mul_(self.weight)
+        #if self.weight is not None:
+        #    one_hot.mul_(self.weight)
 
         return self.criterion(input, one_hot)
 
