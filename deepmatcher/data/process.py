@@ -10,6 +10,7 @@ from torchtext.utils import unicode_csv_reader
 
 from .dataset import MatchingDataset
 from .field import MatchingField
+import torch
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ def _make_fields(header, id_attr, label_attr, ignore_columns, lower, tokenize,
         batch_first=True,
         include_lengths=include_lengths)
     numeric_field = MatchingField(
-        sequential=False, preprocessing=lambda x: float(x), use_vocab=False)
+        sequential=False, use_vocab=False, dtype=torch.float)
     id_field = MatchingField(sequential=False, use_vocab=False, id=True)
 
     fields = []

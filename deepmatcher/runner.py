@@ -127,12 +127,18 @@ class Runner(object):
         pbar.set_postfix(ordered_dict=postfix_dict)
 
     @staticmethod
-    def _compute_scores(output, target):
-        predictions = output.max(1)[1].data
-        correct = (predictions == target.data).float()
-        incorrect = (1 - correct).float()
-        positives = (target.data == 1).float()
-        negatives = (target.data == 0).float()
+    def _compute_scores(output, target, threshold=None):
+        if (output.shape[1] == 1):
+            positives = (target > threshold).float()
+            negatives = (target <= threshold).float()
+            correct = (output[1] == target).float()
+            incorrect = (1 - correct.data).float()
+        else:
+            positives = (target.data == 1.0).float()
+            negatives = (target.data == 0.0).float()
+            predictions = output.max(1)[1].data
+            correct = (predictions == target.data).float()
+            incorrect = (1 - correct).float()
 
         tp = torch.dot(correct, positives)
         tn = torch.dot(correct, negatives)
@@ -220,10 +226,14 @@ class Runner(object):
 
             loss = float('NaN')
             if criterion:
-                loss = criterion(output, getattr(batch, label_attr))
+                l = getattr(batch, label_attr)
+                #print("o:"+str(output))
+                #print("l:"+str(l))
+                loss = criterion(output, l)
+                #print("l:"+str(loss))
 
             if hasattr(batch, label_attr):
-                scores = Runner._compute_scores(output, getattr(batch, label_attr))
+                scores = Runner._compute_scores(output, getattr(batch, label_attr), threshold=0.5)
             else:
                 scores = [0] * 4
 
