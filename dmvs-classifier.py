@@ -4,14 +4,22 @@
 import torch
 import deepmatcher as dm
 import collections
+import pandas as pd
 
 # read datasets
 
 trainLab, validationLab, testLab = dm.data.process(path='/Users/tommasoteofili/Downloads/beer_datasetDM/',
                                                    train='trainLab.csv', validation='validLab.csv', test='testLab.csv')
 
+df = pd.read_csv('/Users/tommasoteofili/Downloads/beer_datasetDM/trainSIM.csv')
+print(df.count())
+df_drop = df.drop(df[(df.label > 0.4) & (df.label < 0.6)].index)
+print(df_drop.count())
+file_name = '/Users/tommasoteofili/Downloads/beer_datasetDM/filtered-trainSIM.csv'
+df_drop.to_csv(file_name, index=False)
+
 trainSIM, validationSIM, testSIM = dm.data.process(path='/Users/tommasoteofili/Downloads/beer_datasetDM/',
-                                                   train='trainSIM.csv', validation='validSIM.csv', test='testSIM.csv')
+                                                   train='filtered-trainSIM.csv', validation='validSIM.csv', test='testSIM.csv')
 
 f1 = 0
 runs = 10
@@ -29,12 +37,12 @@ for i in range(runs):
 
     # create new deep matcher model with similarity module (instead of default classifier)
     pretrained_model = dm.MatchingModel(classifier=lambda: similarity_layer)
-    pretrained_model.initialize(trainSIM)
+    pretrained_model.initialize(trainLab)
 
     print("--> PRETRAIN VINSIM MODEL <--")
     # pretrain vinsim model using similarity dataset
     pretrained_model.run_train(trainSIM, validationSIM, best_save_path='best_pretrained_model.pth',
-                               criterion=torch.nn.MSELoss(), epochs=15)
+                               criterion=torch.nn.SmoothL1Loss(), epochs=15)
 
     # create updated classifier with highway layers and softmax layer
     updated_classifier = base_model.classifier

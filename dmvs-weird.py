@@ -14,7 +14,7 @@ trainSIM, validationSIM, testSIM = dm.data.process(path='/Users/tommasoteofili/D
                                                    train='trainSIM.csv', validation='validSIM.csv', test='testSIM.csv')
 
 f1 = 0.0
-runs = 10
+runs = 40
 for i in range(runs):
 
     # define similarity layer module
