@@ -1339,11 +1339,11 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
             if el[2][0] > max_sim and el not in result_list:
                 result_list.append(el)
                 match = match + 1
-                print("lista lsh match: " + str(match))
+                #print("lista lsh match: " + str(match))
             if el[2][0] < min_sim and el not in result_list:
                 result_list.append(el)
                 no_match = no_match + 1
-                print("lista lsh no match: " + str(no_match))
+                #print("lista lsh no match: " + str(no_match))
 
     while loop_i < 220000:  # 300000:# and (match<totale or no_match<totale):
         # if loop_i%1000000==0:
@@ -1370,7 +1370,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     match = match + 1
 
-                    print("lista random match: " + str(match) + " loop_i: " + str(loop_i))
+                    #print("lista random match: " + str(match) + " loop_i: " + str(loop_i))
                     loop_i = 0
                 else:
                     loop_i = loop_i + 1
@@ -1380,7 +1380,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     no_match = no_match + 1
                     loop_i = 0
-                    print("lista random no match: " + str(no_match) + " loop_i: " + str(loop_i))
+                    #print("lista random no match: " + str(no_match) + " loop_i: " + str(loop_i))
                 else:
                     loop_i = loop_i + 1
 
@@ -1392,7 +1392,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                 copy_match_list.append((tableL_el, tableL_el2, sim_vector))
                 copy_match = copy_match + 1
 
-                print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
+                #print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
                 # print(tableL_el,tableL_el2,sim_vector)
                 loop_i = 0
             else:
@@ -1403,7 +1403,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                     copy_match_list.append((tableR_el, tableR_el2, sim_vector))
                     copy_match = copy_match + 1
 
-                    print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
+                    #print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
                     # print(tableR_el,tableR_el2,sim_vector)
                     loop_i = 0
 
@@ -1413,7 +1413,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                 result_list.append((tableL_el, tableR_el, sim_vector))
                 no_match = no_match + 1
                 loop_i = 0
-                print("lista random no match wo cos_sim: " + str(no_match) + " loop_i: " + str(loop_i))
+                #print("lista random no match wo cos_sim: " + str(no_match) + " loop_i: " + str(loop_i))
             else:
                 loop_i = loop_i + 1
         else:

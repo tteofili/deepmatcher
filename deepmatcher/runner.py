@@ -131,7 +131,7 @@ class Runner(object):
         if (output.shape[1] == 1):
             positives = (target > threshold).float()
             negatives = (target <= threshold).float()
-            n_digits = 2
+            n_digits = 1
             o_r = torch.round(output * 10 ** n_digits) / (10 ** n_digits)
             t_r = torch.round(target * 10 ** n_digits) / (10 ** n_digits)
             correct = (o_r[1] == t_r).float()
