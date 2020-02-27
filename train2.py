@@ -295,11 +295,11 @@ GROUND_TRUTH_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_
 TABLE1_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_data/tableA.csv'
 TABLE2_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_data/tableB.csv'
 ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
-simf = lambda a, b: sim_function.sim4attrScho(a, b)
-funsimstr = "sim4attrScho"
+simf = lambda a, b: sim_function.sim_cos(a, b)
+funsimstr = "sim_cos"
 
 tot_pt = 2000  # dimensione dataset pre_training
-tot_copy = 9000 # numero di elementi generati con edit distance
+tot_copy = 900 # numero di elementi generati con edit distance
 
 soglia = 0.05  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)

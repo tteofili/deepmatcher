@@ -45,10 +45,10 @@ def finetune_dm(all_train, pretrained_model, trainLab, validationLab):
 
 
 def pretrain_dm(all_train, name, train, valid, cut):
-    if (len(train) > cut):
-        train = train[:cut]
-    if (len(valid) > cut):
-        valid = valid[:cut]
+    #if (len(train) > cut):
+    #    train = train[:cut]
+    #if (len(valid) > cut):
+    #    valid = valid[:cut]
 
     names = []
     names.append('id')
@@ -88,7 +88,7 @@ def pretrain_dm(all_train, name, train, valid, cut):
     print("--> PRETRAIN VINSIM MODEL <--")
     # pretrain vinsim model using similarity dataset
     pretrained_model.run_train(trainSIM, validationSIM, best_save_path='best_pretrained_model.pth',
-                               criterion=torch.nn.MSELoss(), epochs=15)
+                               criterion=torch.nn.L1Loss(), epochs=15, optim=dm.optim.Optimizer(lr=0.001))
 
     return pretrained_model
 
@@ -96,10 +96,10 @@ def pretrain_dm(all_train, name, train, valid, cut):
 def train_dm(name, train, valid, test, cut):
     if (len(train) > cut):
         train = train[:cut]
-    if (len(valid) > cut):
-        valid = valid[:cut]
-    if (len(test) > cut):
-        test = test[:cut]
+    #if (len(valid) > cut):
+    #    valid = valid[:cut]
+    #if (len(test) > cut):
+    #    test = test[:cut]
 
     names = []
     names.append('id')
