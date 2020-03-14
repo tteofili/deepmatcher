@@ -21,13 +21,12 @@ from dm_train import train_dm
 from dm_train import eval_dm
 from dm_train import pretrain_dm
 from dm_train import finetune_dm
+from dm_train import pt_ft_dm_classifier
 from dm_train import join
 import sim_function
 
 
 def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy):
-    WORD = re.compile(r'\w+')
-
     # Imposta manualmente a True per caricare da disco tutti i modelli salvati.
     # Imposta manualmente a False per ri-eseguire tutti gli addestramenti.
     LOAD_Dataset_FROM_DISK = False
@@ -66,7 +65,7 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         # uls.save_list(data, 'dataset_{}'.format(DATASET_NAME))
 
     # Unflat data and cut too long attributes
-    def unflat(data, target_idx, shrink=True):
+    def unflat(data, target_idx, shrink=False):
 
         def cut_string(s):
             if len(s) >= 1000:
@@ -81,6 +80,7 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
             t2 = r[1]
             lb = r[target_idx]
             if isinstance(lb, list):
+                #print('there is a list ! -> '+str(len(lb)))
                 lb = lb[0]
             if (shrink):
                 t1 = list(map(cut_string, t1))
@@ -221,7 +221,6 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         # Shuffle.
         shuffle(vinsim_data)
 
-
         # Split in training set e validation set.
         def split_training_valid(data, SPLIT_FACTOR=0.8):
             bound = int(len(data) * SPLIT_FACTOR)
@@ -240,21 +239,13 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         all_train = join(train, valid, test, sim_train, sim_valid, DATASET_NAME)
 
         # Inizializza un nuovo modello.
-        vinsim_model_5 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 5)
-        vinsim_model_10 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 10)
-        vinsim_model_25 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 25)
-        vinsim_model_50 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 50)
-        vinsim_model_75 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 75)
-        vinsim_model_100 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 100)
-        vinsim_model_200 = pretrain_dm(all_train, DATASET_NAME, sim_train, sim_valid, 200)
-
-        finetuned_model_5 = finetune_dm(all_train, vinsim_model_5, trainLab_5, validationLab_5)
-        finetuned_model_10 = finetune_dm(all_train, vinsim_model_10, trainLab_10, validationLab_10)
-        finetuned_model_25 = finetune_dm(all_train, vinsim_model_25, trainLab_25, validationLab_25)
-        finetuned_model_50 = finetune_dm(all_train, vinsim_model_50, trainLab_50, validationLab_50)
-        finetuned_model_75 = finetune_dm(all_train, vinsim_model_75, trainLab_75, validationLab_75)
-        finetuned_model_100 = finetune_dm(all_train, vinsim_model_100, trainLab_100, validationLab_100)
-        finetuned_model_200 = finetune_dm(all_train, vinsim_model_200, trainLab_200, validationLab_200)
+        finetuned_model_5 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_5, validationLab_5)
+        finetuned_model_10 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_10, validationLab_10)
+        finetuned_model_25 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_25, validationLab_25)
+        finetuned_model_50 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_50, validationLab_50)
+        finetuned_model_75 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_75, validationLab_75)
+        finetuned_model_100 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_100, validationLab_100)
+        finetuned_model_200 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_200, validationLab_200)
 
         f_list = []
         f_list.append(eval_dm(finetuned_model_200, testLab_200))
@@ -290,16 +281,18 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         trainK(kappa[i])
 
 
-DATASET_NAME = 'beers'
-GROUND_TRUTH_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_data/all.csv'
-TABLE1_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_data/tableA.csv'
-TABLE2_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/exp_data/tableB.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
+DATASET_NAME = 'amazon_google'
+GROUND_TRUTH_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/Amzon_GoogleProducts_perfectMapping.csv'
+TABLE1_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/AmazonAG.csv'
+TABLE2_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/GoogleProductsAG.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), [4, 4]]
 simf = lambda a, b: sim_function.sim_cos(a, b)
 funsimstr = "sim_cos"
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
+soglia = 0.02  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 
-soglia = 0.05  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
-training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)
+runs = 3
+for i in range(runs):
+    training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)

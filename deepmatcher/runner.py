@@ -134,8 +134,8 @@ class Runner(object):
             n_digits = 1
             o_r = torch.round(output * 10 ** n_digits) / (10 ** n_digits)
             t_r = torch.round(target * 10 ** n_digits) / (10 ** n_digits)
-            correct = (o_r[1] == t_r).float()
-            incorrect = (1 - correct.data).float()
+            correct = (o_r == t_r).float()[0]
+            incorrect = (torch.ones(correct.shape) - correct).float()
         else:
             positives = (target.data == 1.0).float()
             negatives = (target.data == 0.0).float()
@@ -232,6 +232,8 @@ class Runner(object):
                 l = getattr(batch, label_attr)
                 #print("o:"+str(output))
                 #print("l:"+str(l))
+                if (output.shape[1] == 1):
+                    l = l.unsqueeze(1)
                 loss = criterion(output, l)
                 #print("l:"+str(loss))
 

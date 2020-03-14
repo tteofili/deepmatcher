@@ -118,7 +118,7 @@ def split_indici(indici):
         indiciR.append(indici[i][1])
     return indiciL,indiciR
 
-def minHash_lsh(tableL, tableR, indici,simf):
+def minHash_lsh(tableL, tableR, indici, simf):
     indiciL,indiciR=split_indici(indici)
     data4hash,dataL,dataR=create_data(tableL, tableR, indiciL,indiciR)
     res=minHash_LSH(data4hash)
