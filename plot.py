@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from itertools import islice 
+import numpy as np
 
 # Ti restituisce i primi n valori di datatasetOriginal
 # con n = len(datasetOriginal) * percentuale
@@ -101,8 +102,6 @@ def plot_dataPT(data):
     
     result_list=[]
     result_list = sorted(data, key=lambda tup: (tup[2][0]))
-    
-    
     sim_list=[]
     t=[]
     for i in range(len(result_list)):
@@ -110,5 +109,13 @@ def plot_dataPT(data):
         sim_list.append(result_list[i][2][0])
         t.append(i)
     plt.plot(t, sim_list, '-r')
+    gradino = []
+    for g in range(len(t)):
+        if g >= len(t) / 2:
+            gradino.append(1)
+        else:
+            gradino.append(0)
+    plt.plot(t, gradino)
     plt.ylabel('plot_pretraining dataset')
     plt.show()
+    return t, sim_list

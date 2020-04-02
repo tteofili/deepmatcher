@@ -158,6 +158,7 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
     datapt_hash = minHash_lsh(TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf)
 
     def trainK(k):
+        print('training with k='+str(k))
         # Dataset per VinSim.
         vinsim_data = []
 
@@ -281,18 +282,17 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         trainK(kappa[i])
 
 
-DATASET_NAME = 'amazon_google'
-GROUND_TRUTH_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/Amzon_GoogleProducts_perfectMapping.csv'
-TABLE1_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/AmazonAG.csv'
-TABLE2_FILE = '/Users/tommasoteofili/Desktop/dataset/'+DATASET_NAME+'/GoogleProductsAG.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3), [4, 4]]
-simf = lambda a, b: sim_function.sim_cos(a, b)
-funsimstr = "sim_cos"
+DATASET_NAME = 'dplb_scholar'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP-Scholar_perfectMapping.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP1.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/Scholar.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4)]
+simf = lambda a, b: sim_function.sim4attrFZ(a, b)
+funsimstr = "sim4attrFZ"
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
-soglia = 0.02  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
-
+soglia = 0.03  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 runs = 3
 for i in range(runs):
     training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)
