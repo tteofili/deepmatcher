@@ -282,17 +282,17 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         trainK(kappa[i])
 
 
-DATASET_NAME = 'dplb_scholar'
-GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP-Scholar_perfectMapping.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP1.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/Scholar.csv'
+DATASET_NAME = 'beers'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableB.csv'
 ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4)]
-simf = lambda a, b: sim_function.sim4attrFZ(a, b)
-funsimstr = "sim4attrFZ"
+simf = lambda a, b: sim_function.sim_bf_beers(a, b)
+funsimstr = "sim_bf_beers"
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
-soglia = 0.03  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
+soglia = 0.1  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 runs = 3
 for i in range(runs):
     training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)

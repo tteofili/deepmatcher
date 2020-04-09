@@ -308,6 +308,64 @@ def sim4attrScho(stringa1, stringa2):
     return [aver]
 
 
+def sim_bf_scho(stringa1, stringa2):
+    s0 = sim_ngram(stringa1[0], stringa2[0])
+
+    t1_split = stringa1[1].split()
+    t2_split = stringa2[1].split()
+    s1 = sim_lev(t1_split, t2_split)
+
+    s2 = sim_ngram(stringa1[2], stringa2[2])
+    s3 = sim_ngram(stringa1[3], stringa2[3])
+
+    vect = [s0, s1, s2, s3]
+    # print(vect)
+    #rm_min = min(vect)
+    #vect.remove(rm_min)
+    # print(vect)
+
+    aver = round(sum(vect) / len(vect), 2)
+    # print(aver)
+    return [aver]
+
+def sim_bf_beers(stringa1, stringa2):
+
+    s0 = sim_cos(stringa1[0], stringa2[0])
+
+    s1 = sim_ngram(stringa1[1], stringa2[1])
+
+    s2 = sim_sodi(stringa1[2], stringa2[2])
+    s3 = sim_sodi(stringa1[3], stringa2[3])
+
+    vect = [s0[0], s1[0], s2[0], s3[0]]
+    # print(vect)
+    #rm_min = min(vect)
+    #vect.remove(rm_min)
+    # print(vect)
+
+    aver = round(sum(vect) / len(vect), 2)
+    # print(aver)
+    return [aver]
+
+def sim_bf_fz(stringa1, stringa2):
+
+    s0 = sim_ngram(stringa1[0], stringa2[0])
+
+    s1 = sim_sodi(stringa1[1], stringa2[1])
+
+    s2 = sim_lev(stringa1[2], stringa2[2])
+    s3 = sim_lev(stringa1[3], stringa2[3])
+
+    vect = [s0[0], s1[0], s2[0], s3[0]]
+    # print(vect)
+    #rm_min = min(vect)
+    #vect.remove(rm_min)
+    # print(vect)
+
+    aver = round(sum(vect) / len(vect), 2)
+    # print(aver)
+    return [aver]
+
 def min_cos(data):
     cosine = []
     for el in data:

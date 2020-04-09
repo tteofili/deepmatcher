@@ -2,23 +2,12 @@ from __future__ import print_function
 from plot import plot_graph, plot_pretrain, plot_dataPT
 
 import random
-import re, math
-from collections import Counter
 import matplotlib.pyplot as plt
-from csv2dataset import splitting_dataSet, csvTable2datasetRANDOM, csv_2_datasetALTERNATE, \
-    csvTable2datasetRANDOM_likeGold
-# from csv2dataset import csvTable2datasetRANDOMCos,splitting_dataSet, csv_2_datasetALTERNATE, csvTable2datasetRANDOM
-# from lsh_forest import minHash_lshForest
+from csv2dataset import csv_2_datasetALTERNATE, csvTable2datasetRANDOM_likeGold
 from minhash_lsh2 import minHash_lsh
 from sim_function import min_cos
 from random import shuffle
 import numpy as np
-from dm_train import train_dm
-from dm_train import eval_dm
-from dm_train import pretrain_dm
-from dm_train import finetune_dm
-from dm_train import pt_ft_dm_classifier
-from dm_train import join
 import sim_function
 from inspect import getsource
 
@@ -36,13 +25,16 @@ simfunctions = [
     lambda t1, t2: sim_function.sim4attrWA(t1, t2),
     lambda t1, t2: sim_function.sim4attrGA(t1, t2),
     lambda t1, t2: sim_function.sim4attrScho(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_beers(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_fz(t1, t2),
 ]
 
-DATASET_NAME = 'dplb_scholar'
-GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP-Scholar_perfectMapping.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP1.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/Scholar.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
+DATASET_NAME = 'beers'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4)]
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
@@ -53,7 +45,7 @@ best = []
 
 for r in range(3):
     bestFun = lambda t1, t2: t1 == t2
-
+    lowestMSE = 1e10
     # for each sim function
     for simf in simfunctions:
         data = csv_2_datasetALTERNATE(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf)
@@ -139,14 +131,7 @@ for r in range(3):
 
             random_tuples0 = csvTable2datasetRANDOM_likeGold(TABLE1_FILE, TABLE2_FILE, min_sim, max_sim, ATT_INDEXES,
                                                              datapt_hash, min_cos_sim, tot_copy, simf)
-            # random_tuples0 =csvTable2datasetRANDOM_bilancedWITHlsh(TABLE1_FILE, TABLE2_FILE, 2000, min_sim, max_sim, ATT_INDEXES,datapt_hash, simf )
-            # tot_pt=86#len(datapt_hash)*2
-            # random_tuples=csvTable2datasetRANDOM_nomatch(TABLE1_FILE, TABLE2_FILE, tot_pt, min_sim, ATT_INDEXES, simf )
-            # for i in range(len(datapt_hash)):
-            # if datapt_hash[i] not in random_tuples0:
-            # random_tuples0.append(datapt_hash[i])
-            # random_tuples0.extend(datapt_hash)
-            # print("match: "+str(match)+"; no_match: "+str(no_match)+"; nlog1: "+str(nlog1)+"; nlog2: "+str(nlog2))
+
             random.shuffle(random_tuples0)
             random_tuples0sort = sorted(random_tuples0, key=lambda tup: (tup[2][0]))
             plot_pretrain(random_tuples0sort)
@@ -178,8 +163,6 @@ for r in range(3):
 
             t, sim_list = plot_dataPT(vinsim_data)
             plt.xlabel('')
-            #t = t[:tot_copy:-tot_copy]
-            #sim_list = sim_list[:tot_copy:-tot_copy]
             gradino = []
             for g in range(len(t)):
                 if g >= len(t) / 2:

@@ -9,7 +9,7 @@ from inspect import getsource
 
 import numpy as np
 import sim_function
-from csv2dataset import csv_2_datasetALTERNATE
+from csv2dataset import read_data_bf
 
 simfunctions = [
     lambda t1, t2: sim_function.sim_jacc(t1, t2),
@@ -23,10 +23,10 @@ simfunctions = [
 
 get_lambda_name = lambda l: getsource(l).split('=')[0].strip()
 
-DATASET_NAME = 'dplb_scholar'
-GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/DBLP-Scholar_perfectMapping.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/DBLP1.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/Scholar.csv'
+DATASET_NAME = 'fodo_zaga'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/matches_fodors_zagats.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/fodors.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/zagats.csv'
 ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4,4)]
 
 runs = 1
@@ -48,7 +48,7 @@ def bf(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
         for simf in sim_functions:
             name = get_lambda_name(simf)
             #print(f'checking {k}:{name}')
-            data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], simf)
+            data = read_data_bf(gt_file, t1_file, t2_file, [k], simf)
             perc = len(data) * 0.05
             npdata = np.array(data[:int(perc)])
             npdata[:, 2] = unflat(npdata[:, 2])
@@ -77,3 +77,7 @@ bestfuns = []
 for i in range(runs):
     bestfuns.append(bf(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simfunctions))
 print(bestfuns)
+
+'''
+ma il dubbio è: quanto è distante questo dataset su cui troviamo la funzione da quello di pretraining ?
+'''
