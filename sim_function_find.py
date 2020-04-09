@@ -42,7 +42,7 @@ DATASET_NAME = 'dplb_scholar'
 GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP-Scholar_perfectMapping.csv'
 TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/DBLP1.csv'
 TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/Scholar.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4)]
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
@@ -51,8 +51,7 @@ get_lambda_name = lambda l: getsource(l).split('=')[0].strip()
 
 best = []
 
-for r in range(5):
-    lowestMSE = 1e10
+for r in range(3):
     bestFun = lambda t1, t2: t1 == t2
 
     # for each sim function
@@ -123,9 +122,6 @@ for r in range(5):
             k = kappa[i]
             # Dataset per VinSim.
             vinsim_data = []
-
-            # Porzione di tuple in match da includere nell'addestramento di VinSim.
-            TP_FACTOR = 0.05
 
             # Preleva solo quelle in match con il relativo sim vector.
             # sim_data = unflat(data, 3)
