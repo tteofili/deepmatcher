@@ -318,7 +318,7 @@ def sim_bf_scho(stringa1, stringa2):
     s2 = sim_ngram(stringa1[2], stringa2[2])
     s3 = sim_ngram(stringa1[3], stringa2[3])
 
-    vect = [s0, s1, s2, s3]
+    vect = [s0[0], s1[0], s2[0], s3[0]]
     # print(vect)
     #rm_min = min(vect)
     #vect.remove(rm_min)

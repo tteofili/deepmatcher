@@ -9,26 +9,21 @@ from sim_function import min_cos
 from random import shuffle
 import numpy as np
 import sim_function
-from inspect import getsource
-
 simfunctions = [
-    lambda t1, t2: sim_function.sim_jacc(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_beers(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
+    lambda t1, t2: sim_function.sim_bf_fz(t1, t2),
     lambda t1, t2: sim_function.sim_cos(t1, t2),
+    lambda t1, t2: sim_function.sim_jacc(t1, t2),
     lambda t1, t2: sim_function.sim_hamming(t1, t2),
     lambda t1, t2: sim_function.sim_lcs(t1, t2),
     lambda t1, t2: sim_function.sim_lev(t1, t2),
     lambda t1, t2: sim_function.sim_ngram(t1, t2),
     lambda t1, t2: sim_function.sim_sodi(t1, t2),
-    lambda t1, t2: sim_function.sim4attrFZ(t1, t2),
-    lambda t1, t2: sim_function.sim4attrFZwoClassEPhone(t1, t2),
-    lambda t1, t2: sim_function.sim4attrFZwoClass(t1, t2),
-    lambda t1, t2: sim_function.sim4attrWA(t1, t2),
-    lambda t1, t2: sim_function.sim4attrGA(t1, t2),
     lambda t1, t2: sim_function.sim4attrScho(t1, t2),
-    lambda t1, t2: sim_function.sim_bf_beers(t1, t2),
-    lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
-    lambda t1, t2: sim_function.sim_bf_fz(t1, t2),
 ]
+from inspect import getsource
+
 
 DATASET_NAME = 'beers'
 GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/all.csv'
