@@ -11,6 +11,10 @@ from strsimpy.ngram import NGram
 import nltk
 import re, math
 from collections import Counter
+import torch
+import scipy
+import numpy
+
 
 WORD = re.compile(r'\w+')
 
@@ -366,6 +370,25 @@ def sim_bf_fz(stringa1, stringa2):
     # print(aver)
     return [aver]
 
+def sim_bf_ag(stringa1, stringa2):
+
+    s0 = sim_cos(stringa1[0], stringa2[0])
+
+    s1 = sim_cos(stringa1[1], stringa2[1])
+
+    s2 = sim_ngram(stringa1[2], stringa2[2])
+    s3 = sim_hamming(stringa1[3], stringa2[3])
+
+    vect = [s0[0], s1[0], s2[0], s3[0]]
+    # print(vect)
+    #rm_min = min(vect)
+    #vect.remove(rm_min)
+    # print(vect)
+
+    aver = round(sum(vect) / len(vect), 2)
+    # print(aver)
+    return [aver]
+
 def min_cos(data):
     cosine = []
     for el in data:
@@ -375,3 +398,47 @@ def min_cos(data):
         cosine.append(cos_sim)
 
     return min(cosine)
+
+def sim_bert(stringa1, stringa2):
+    _, _, e1 = extract_bert(stringa1, tokenizer, model)
+    _, _, e2 = extract_bert(stringa2, tokenizer, model)
+
+    a = torch.mean(e1, 0).numpy()
+    b = torch.mean(e2, 0).numpy()
+
+    return [scipy.spatial.distance.cosine(a,b)]
+
+def sim_sbert(stringa1, stringa2):
+    e1 = embedder.encode([' '.join(stringa1)])
+    e2 = embedder.encode([' '.join(stringa2)])
+    return [scipy.spatial.distance.cosine(e1, e2)]
+
+def extract_bert(text, tokenizer, model):
+    text_ids = torch.tensor([tokenizer.encode(text, add_special_tokens=True)])
+    text_words = tokenizer.convert_ids_to_tokens(text_ids[0])[1:-1]
+
+    n_chunks = int(numpy.ceil(float(text_ids.size(1)) / 510))
+    states = []
+
+    for ci in range(n_chunks):
+        try:
+            text_ids_ = text_ids[0, 1 + ci * 510:1 + (ci + 1) * 510]
+            torch.cat([text_ids[0, 0].unsqueeze(0), text_ids_])
+            if text_ids[0, -1] != text_ids[0, -1]:
+                torch.cat([text_ids, text_ids[0, -1].unsqueeze(0)])
+
+            with torch.no_grad():
+                state = model(text_ids_.unsqueeze(0))[0]
+                state = state[:, 1:-1, :]
+            states.append(state)
+        except:
+            pass
+    state = torch.cat(states, axis=1)
+    return text_ids, text_words, state[0]
+
+from transformers import *
+from sentence_transformers import SentenceTransformer
+
+tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', do_lower_case=False)
+model = AutoModel.from_pretrained('bert-base-uncased')
+embedder = SentenceTransformer('bert-base-nli-mean-tokens')
