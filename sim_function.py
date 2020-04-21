@@ -323,10 +323,6 @@ def sim_bf_scho(stringa1, stringa2):
     s3 = sim_ngram(stringa1[3], stringa2[3])
 
     vect = [s0[0], s1[0], s2[0], s3[0]]
-    # print(vect)
-    #rm_min = min(vect)
-    #vect.remove(rm_min)
-    # print(vect)
 
     aver = round(sum(vect) / len(vect), 2)
     # print(aver)
@@ -342,32 +338,165 @@ def sim_bf_beers(stringa1, stringa2):
     s3 = sim_sodi(stringa1[3], stringa2[3])
 
     vect = [s0[0], s1[0], s2[0], s3[0]]
-    # print(vect)
-    #rm_min = min(vect)
-    #vect.remove(rm_min)
-    # print(vect)
 
     aver = round(sum(vect) / len(vect), 2)
     # print(aver)
     return [aver]
 
 def sim_bf_fz(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_sodi(stringa1[0], stringa2[0]) # or ngram or cos
 
-    s0 = sim_ngram(stringa1[0], stringa2[0])
+    s1 = sim_hamming(stringa1[1], stringa2[1]) # or cos or lev
 
-    s1 = sim_sodi(stringa1[1], stringa2[1])
+    s2 = sim_cos(stringa1[2], stringa2[2]) # or sbert2
+    s3 = sim_cos(stringa1[3], stringa2[3]) # or cos or lcs
+    s4 = sim_lev(stringa1[4], stringa2[4]) # or bert or sbert2
+    s5 = sim_jacc(stringa1[5], stringa2[5]) # or
 
-    s2 = sim_lev(stringa1[2], stringa2[2])
-    s3 = sim_lev(stringa1[3], stringa2[3])
-
-    vect = [s0[0], s1[0], s2[0], s3[0]]
-    # print(vect)
-    #rm_min = min(vect)
-    #vect.remove(rm_min)
-    # print(vect)
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
 
     aver = round(sum(vect) / len(vect), 2)
-    # print(aver)
+    return [aver]
+
+def sim_bf_fz2(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_sodi(stringa1[0], stringa2[0])
+
+    s1 = sim_jacc(stringa1[1], stringa2[1])
+
+    s2 = sim_jacc(stringa1[2], stringa2[2])
+    s3 = sim_ngram(stringa1[3], stringa2[3])
+    s4 = jaro(stringa1[4], stringa2[4])
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz2a(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = (sim_hamming(stringa1[0].split(), stringa2[0].split()))
+
+    s1 = sim_jacc(stringa1[1].split(), stringa2[1].split())
+
+    s2 = sim_hamming(stringa1[2].split(), stringa2[2].split())
+    s3 = sim_cos(stringa1[3].split(), stringa2[3].split())
+    s4 = jaro(stringa1[4].split(), stringa2[4].split())
+    s5 = sim_lev(stringa1[5].split(), stringa2[5].split())
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz2b(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_cos(stringa1[0].split(), stringa2[0].split())
+
+    s1 = sim_jacc(stringa1[1].split(), stringa2[1].split())
+
+    s2 = sim_hamming(stringa1[2].split(), stringa2[2].split())
+    s3 = sim_cos(stringa1[3].split(), stringa2[3].split())
+    s4 = sim_cos(stringa1[4].split(), stringa2[4].split())
+    s5 = sim_lev(stringa1[5].split(), stringa2[5].split())
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz2bNoSplit(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_cos(stringa1[0], stringa2[0])
+
+    s1 = sim_jacc(stringa1[1], stringa2[1])
+
+    s2 = sim_hamming(stringa1[2], stringa2[2])
+    s3 = sim_cos(stringa1[3], stringa2[3])
+    s4 = sim_cos(stringa1[4], stringa2[4])
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz2bNoSplitNoMin(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_cos(stringa1[0], stringa2[0])
+
+    s1 = sim_jacc(stringa1[1], stringa2[1])
+
+    s2 = sim_hamming(stringa1[2], stringa2[2])
+    s3 = sim_cos(stringa1[3], stringa2[3])
+    s4 = sim_cos(stringa1[4], stringa2[4])
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz_boh(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_cos(stringa1[0].split(), stringa2[0].split())
+
+    s1 = sim_sodi(stringa1[1].split(), stringa2[1].split()) #or sodi_s
+
+    s2 = sim_cos(stringa1[2], stringa2[2]) #or cos_s
+    s3 = sim_cos(stringa1[3].split(), stringa2[3].split()) # or cos_s
+    s4 = sim_sodi(stringa1[4], stringa2[4]) #sodi
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz_boh2(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_jacc(stringa1[0].split(), stringa2[0].split())
+
+    s1 = sim_jacc(stringa1[1].split(), stringa2[1].split())
+
+    s2 = sim_hamming(stringa1[2], stringa2[2])
+    s3 = sim_jacc(stringa1[3], stringa2[3])
+    s4 = jaro(stringa1[4], stringa2[4])
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf_fz_ok(stringa1, stringa2):
+    # jaro, jacc, cos, lev, jac, lev
+    s0 = sim_cos(stringa1[0].split(), stringa2[0].split())
+
+    s1 = sim_cos(stringa1[1].split(), stringa2[1].split()) #or sodi_s
+
+    s2 = sim_jacc(stringa1[2], stringa2[2]) #or cos_s
+    s3 = sim_cos(stringa1[3].split(), stringa2[3].split()) # or cos_s
+    s4 = jaro(stringa1[4], stringa2[4]) #sodi
+    s5 = sim_lev(stringa1[5], stringa2[5])
+
+    vect = [s0[0], s1[0], s2[0], s3[0], s4[0], s5[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
     return [aver]
 
 def sim_bf_ag(stringa1, stringa2):
@@ -380,10 +509,6 @@ def sim_bf_ag(stringa1, stringa2):
     s3 = sim_hamming(stringa1[3], stringa2[3])
 
     vect = [s0[0], s1[0], s2[0], s3[0]]
-    # print(vect)
-    #rm_min = min(vect)
-    #vect.remove(rm_min)
-    # print(vect)
 
     aver = round(sum(vect) / len(vect), 2)
     # print(aver)
@@ -400,18 +525,29 @@ def min_cos(data):
     return min(cosine)
 
 def sim_bert(stringa1, stringa2):
-    _, _, e1 = extract_bert(stringa1, tokenizer, model)
-    _, _, e2 = extract_bert(stringa2, tokenizer, model)
+    _, _, e1 = extract_bert(' '.join(stringa1), tokenizer, model)
+    _, _, e2 = extract_bert(' '.join(stringa2), tokenizer, model)
 
-    a = torch.mean(e1, 0).numpy()
-    b = torch.mean(e2, 0).numpy()
+    a = torch.mean(e1, 0)
+    a[torch.isnan(a)] = 0
+    b = torch.mean(e2, 0)
+    b[torch.isnan(b)] = 0
 
-    return [scipy.spatial.distance.cosine(a,b)]
+    return [1 - scipy.spatial.distance.cosine(a.numpy(), b.numpy())]
 
 def sim_sbert(stringa1, stringa2):
     e1 = embedder.encode([' '.join(stringa1)])
+    e1 = numpy.nan_to_num(e1)
     e2 = embedder.encode([' '.join(stringa2)])
-    return [scipy.spatial.distance.cosine(e1, e2)]
+    e2 = numpy.nan_to_num(e2)
+    return [1 - scipy.spatial.distance.cosine(e1, e2)]
+
+def sim_sbert2(stringa1, stringa2):
+    e1 = encoder.encode([' '.join(stringa1)])
+    e1 = numpy.nan_to_num(e1)
+    e2 = encoder.encode([' '.join(stringa2)])
+    e2 = numpy.nan_to_num(e2)
+    return [1 - scipy.spatial.distance.cosine(e1, e2)]
 
 def extract_bert(text, tokenizer, model):
     text_ids = torch.tensor([tokenizer.encode(text, add_special_tokens=True)])
@@ -438,7 +574,21 @@ def extract_bert(text, tokenizer, model):
 
 from transformers import *
 from sentence_transformers import SentenceTransformer
+from sentence_transformers import models
+
 
 tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', do_lower_case=False)
 model = AutoModel.from_pretrained('bert-base-uncased')
 embedder = SentenceTransformer('bert-base-nli-mean-tokens')
+
+PATH = "/home/tteofili/Downloads/"
+model.save_pretrained(PATH)
+tokenizer.save_pretrained(PATH)
+embedding = models.BERT(PATH, max_seq_length=128,do_lower_case=True)
+pooling_model = models.Pooling(embedding.get_word_embedding_dimension(),
+                               pooling_mode_mean_tokens=True,
+                               pooling_mode_cls_token=False,
+                               pooling_mode_max_tokens=False)
+model2 = SentenceTransformer(modules=[embedding, pooling_model])
+model2.save(PATH)
+encoder = SentenceTransformer(PATH)

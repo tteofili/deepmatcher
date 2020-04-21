@@ -10,29 +10,47 @@ from random import shuffle
 import numpy as np
 import sim_function
 simfunctions = [
-    lambda t1, t2: sim_function.sim_bf_beers(t1, t2),
-    lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
-    lambda t1, t2: sim_function.sim_bf_fz(t1, t2),
-    lambda t1, t2: sim_function.sim_cos(t1, t2),
+    lambda t1, t2: sim_function.jaro(t1, t2),
     lambda t1, t2: sim_function.sim_jacc(t1, t2),
+    lambda t1, t2: sim_function.sim_cos(t1, t2),
     lambda t1, t2: sim_function.sim_hamming(t1, t2),
     lambda t1, t2: sim_function.sim_lcs(t1, t2),
     lambda t1, t2: sim_function.sim_lev(t1, t2),
     lambda t1, t2: sim_function.sim_ngram(t1, t2),
     lambda t1, t2: sim_function.sim_sodi(t1, t2),
-    lambda t1, t2: sim_function.sim4attrScho(t1, t2),
+    lambda t1, t2: sim_function.sim_bert(t1, t2),
+    lambda t1, t2: sim_function.sim_sbert(t1, t2),
+    lambda t1, t2: sim_function.sim_sbert2(t1, t2),
+    lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.jaro(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_lcs(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_lev(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_ngram(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_bert(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_sbert(t1.split(), t2.split()),
+    lambda t1, t2: sim_function.sim_sbert2(t1.split(), t2.split()),
 ]
 from inspect import getsource
 
 
-DATASET_NAME = 'beers'
-GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/all.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableA.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/'+DATASET_NAME+'/tableB.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4)]
+'''DATASET_NAME = 'fodo_zaga'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/matches_fodors_zagats.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/fodors.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/zagats.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)]'''
 
-tot_pt = 2000  # dimensione dataset pre_training
-tot_copy = 900 # numero di elementi generati con edit distance
+
+DATASET_NAME = 'dirty_amazon_itunes'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8)]
+
+tot_pt = 1000  # dimensione dataset pre_training
+tot_copy = 400 # numero di elementi generati con edit distance
 soglia = 0.03  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 get_lambda_name = lambda l: getsource(l).split('=')[0].strip()
 
@@ -165,6 +183,7 @@ for r in range(3):
                 else:
                     gradino.append(0)
             mse = (np.square(np.array(gradino) - sim_list)).mean(axis=None)
+            print(f'{get_lambda_name(simf)} -> mse({mse})')
             if (mse < lowestMSE):
                 lowestMSE = mse
                 bestFun = simf

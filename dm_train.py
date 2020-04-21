@@ -125,7 +125,7 @@ def train_dm(name, train, valid, test, cut):
 
     print("TRAINING with "+str(len(train))+" samples")
     # train default model with standard dataset
-    model.run_train(trainLab, validationLab, best_save_path='best_default_model.pth', epochs=15)
+    model.run_train(trainLab, validationLab, best_save_path='best_default_model.pth', epochs=1)
 
     return model, trainLab, validationLab, testLab
 
