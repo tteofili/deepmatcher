@@ -126,6 +126,11 @@ def sim_jacc(tuple1, tuple2):
     vector = [jacc]
     return vector
 
+def sim_equals(tuple1, tuple2):
+    return [tuple1 == tuple2]
+
+def sim_noselect(tuple1, tuple2):
+    return [0.5]
 
 def sim_sodi(tuple1, tuple2):
     t1_concat = concatenate_list_data(tuple1)
@@ -313,20 +318,63 @@ def sim4attrScho(stringa1, stringa2):
 
 
 def sim_bf_scho(stringa1, stringa2):
-    s0 = sim_ngram(stringa1[0], stringa2[0])
+    s0 = sim_ngram(stringa1[0].split(), stringa2[0].split())
 
     t1_split = stringa1[1].split()
     t2_split = stringa2[1].split()
     s1 = sim_lev(t1_split, t2_split)
 
-    s2 = sim_ngram(stringa1[2], stringa2[2])
-    s3 = sim_ngram(stringa1[3], stringa2[3])
+    s2 = sim_ngram(stringa1[2].split(), stringa2[2].split())
+    s3 = sim_ngram(stringa1[3].split(), stringa2[3].split())
 
     vect = [s0[0], s1[0], s2[0], s3[0]]
 
     aver = round(sum(vect) / len(vect), 2)
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
     # print(aver)
     return [aver]
+
+def sim_bf_dirty_scho(stringa1, stringa2):
+    s0 = sim_lev(stringa1[0].split(), stringa2[0].split())
+
+    t1_split = stringa1[1].split()
+    t2_split = stringa2[1].split()
+    s1 = sim_sodi(t1_split, t2_split)
+
+    s2 = jaro(stringa1[2], stringa2[2])
+    s3 = jaro(stringa1[3], stringa2[3])
+
+    vect = [s0[0], s1[0], s2[0], s3[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    # print(aver)
+    return [aver]
+
+def sim_bf_dirty_acm(stringa1, stringa2):
+    s0 = sim_ngram(stringa1[0], stringa2[0])
+
+    s1 = sim_jacc(stringa1[1], stringa2[1])
+
+    s2 = jaro(stringa1[2].split(), stringa2[2].split())
+    s3 = jaro(stringa1[3], stringa2[3])
+
+    vect = [s0[0], s1[0], s2[0], s3[0]]
+
+    aver = round(sum(vect) / len(vect), 2)
+    rm_min = min(vect)
+    vect.remove(rm_min)
+    rm_max = max(vect)
+    vect.remove(rm_max)
+    # print(aver)
+    return [aver]
+
 
 def sim_bf_beers(stringa1, stringa2):
 
@@ -482,6 +530,55 @@ def sim_bf_fz_boh2(stringa1, stringa2):
 
     aver = round(sum(vect) / len(vect), 2)
     return [aver]
+'''
+
+'''
+def sim_bf2_ab(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_sodi(t1s, t2s)[0]*0.3788014897846522 + sim_cos(t1s, t2s)[0]*0.3411662864327195 + sim_jacc(t1s, t2s)[0]*0.28003222378262843
+    '''s0 = sim_sodi(t1s, t2s)[0] * 0.119 + sim_cos(t1s, t2s)[0] * 0.116 \
+         + sim_jacc(t1s, t2s)[0] * 0.093 + sim_lcs(t1s, t2s)[0] * 0.072 \
+         + sim_lev(t1s, t2s)[0] * 0.07 + sim_ngram(t1s, t2s)[0] * 0.07 \
+         + sim_jacc(t1, t2)[0] * 0.052 + sim_sbert(t1s, t2s)[0] * 0.045 \
+         + sim_sodi(t1, t2)[0] * 0.044 + sim_cos(t1, t2)[0] * 0.044 \
+         + sim_hamming(t1s, t2s)[0] * 0.037 + sim_lev(t1, t2)[0] * 0.034 \
+         + jaro(t1, t2)[0] * 0.022 + sim_hamming(t1, t2)[0] * 0.022 \
+         + sim_bert(t1s, t2s)[0] * 0.021 + sim_ngram(t1, t2)[0] * 0.017 \
+         + sim_sbert2(t1s, t2s)[0] * 0.0144 + sim_sbert(t1, t2)[0] * 0.010'''
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_cos(t1s, t2s)[0]*0.37717431759570813 + sim_sodi(t1s, t2s)[0]*0.3619633052969103 + sim_jacc(t1s, t2s)[0]*0.26086237710738164
+    '''s1 = sim_cos(t1s, t2s)[0] * 0.138 + sim_sodi(t1s, t2s)[0] * 0.113 + sim_cos(t1, t2)[0] * 0.084 \
+         + sim_jacc(t1s, t2s)[0] * 0.084 + sim_lev(t1s, t2s)[0] * 0.064 \
+         + sim_ngram(t1s, t2s)[0] * 0.063 + sim_sbert2(t1s, t2s)[0] * 0.057 \
+         + sim_lcs(t1s, t2s)[0] * 0.057 + sim_hamming(t1s, t2s)[0] * 0.057 \
+         + sim_sbert(t1s, t2s)[0] * 0.051 + sim_sbert2(t1, t2)[0] * 0.039 \
+         + sim_bert(t1, t2)[0] * 0.027 + sim_ngram(t1, t2)[0] * 0.0202 + sim_hamming(t1, t2)[0] * 0.0183 \
+         + jaro(t1s, t2s)[0] * 0.0176 + sim_lev(t1, t2)[0] * 0.017 + sim_lcs(t1, t2)[0] * 0.016 \
+         + sim_jacc(t1, t2)[0] * 0.015 + jaro(t1, t2)[0] * 0.015 + sim_bert(t1s, t2s)[0] * 0.01'''
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_sodi(t1s, t2s)[0]*0.3338552330482958 + sim_jacc(t1s, t2s)[0]*0.3338552330482958 + sim_jacc(t1, t2)[0]*0.3322895339034085
+    '''s2 = sim_sbert(t1, t2)[0] * 0.068 + sim_cos(t1, t2)[0] * 0.060 + sim_sodi(t1s, t2s)[0] * 0.058 \
+         + sim_jacc(t1s, t2s)[0] * 0.058 + sim_sbert(t1s, t2s)[0] * 0.056 + sim_sbert2(t1, t2)[0] * 0.054 \
+         + sim_ngram(t1s, t2s)[0] * 0.054 + sim_sbert2(t1s, t2s)[0] * 0.052 + sim_jacc(t1, t2)[0] * 0.048 \
+         + jaro(t1s, t2s)[0] * 0.047 + sim_ngram(t1, t2)[0] * 0.046 + sim_lcs(t1, t2)[0] * 0.043 + sim_lcs(
+        t1s, t2s)[0] * 0.043 \
+         + sim_hamming(t1s, t2s)[0] * 0.042 + jaro(t1, t2)[0] * 0.038 + sim_bert(t1s, t2s)[0] * 0.037 \
+         + sim_bert(t1, t2)[0] * 0.037 + sim_hamming(t1, t2)[0] * 0.036 + sim_lev(t1s, t2s)[0] * 0.035 + sim_lev(t1, t2)[0] * 0.031'''
+
+    vect = [s0, s1, s2]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
 
 def sim_bf_fz_ok(stringa1, stringa2):
     # jaro, jacc, cos, lev, jac, lev
@@ -533,7 +630,10 @@ def sim_bert(stringa1, stringa2):
     b = torch.mean(e2, 0)
     b[torch.isnan(b)] = 0
 
-    return [1 - scipy.spatial.distance.cosine(a.numpy(), b.numpy())]
+    v1 = numpy.nan_to_num(a.numpy())
+    v2 = numpy.nan_to_num(b.numpy())
+    distance = numpy.nan_to_num(scipy.spatial.distance.cosine(v1, v2))
+    return [1 - distance]
 
 def sim_sbert(stringa1, stringa2):
     e1 = embedder.encode([' '.join(stringa1)])

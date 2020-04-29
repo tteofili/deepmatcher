@@ -47,7 +47,7 @@ def plotting(result_list,index):
     
     plt.plot(t, label_list, '-b',t, sim_list, '-r')
     plt.ylabel('plot_sim'+str(index))
-    plt.show()
+    plt.show(block=False)
     '''
     plt.plot(t, label_list, '-b',t, sim_listArr, '-r' )
     plt.ylabel('plot_simArr'+str(index))
@@ -96,7 +96,7 @@ def plot_pretrain(data):
         t.append(i)
     plt.plot(t, sim_list, '-r')
     plt.ylabel('plot_pretraining data')
-    plt.show()
+    plt.show(block=False)
     
 def plot_dataPT(data):
     
@@ -117,5 +117,5 @@ def plot_dataPT(data):
             gradino.append(0)
     plt.plot(t, gradino)
     plt.ylabel('plot_pretraining dataset')
-    plt.show()
+    plt.show(block=False)
     return t, sim_list

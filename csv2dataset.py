@@ -363,15 +363,15 @@ def csvTable2datasetRANDOM_bilanced_checkAllList(tableL, tableR, tot, indici, si
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     match = match + 1
                     i = i + 1
-                    print("lista random match: " + str(match))
+                    #print("lista random match: " + str(match))
 
                 if sim_vector[0] < 0.2 and no_match < tot / 2:
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     no_match = no_match + 1
                     i = i + 1
-                    print("lista random no match: " + str(no_match))
+                    #print("lista random no match: " + str(no_match))
 
-    print(result_list[:4])
+    #print(result_list[:4])
     return result_list
 
 
@@ -412,7 +412,7 @@ def csvTable2datasetRANDOM_bilanced1(tableL, tableR, tot, min_sim, max_sim, indi
             result_list.append((tableL_el, tableR_el, sim_vector))
             match = match + 1
             i = i + 1
-            print("lista random match: " + str(match))
+            #print("lista random match: " + str(match))
 
         if sim_vector[0] < min_sim and no_match < tot / 2:
             # if (tableL_el,tableR_el,sim_vector) not in result_list:
@@ -420,10 +420,10 @@ def csvTable2datasetRANDOM_bilanced1(tableL, tableR, tot, min_sim, max_sim, indi
             result_list.append((tableL_el, tableR_el, sim_vector))
             no_match = no_match + 1
             i = i + 1
-            print("lista random no match: " + str(no_match))
+            #print("lista random no match: " + str(no_match))
 
-    print(result_list[:4])
-    print(result_list[-15:])
+    #print(result_list[:4])
+    #print(result_list[-15:])
     return result_list
 
 
@@ -464,17 +464,17 @@ def csvTable2datasetRANDOM_bilanced(tableL, tableR, tot, min_sim, max_sim, indic
                 result_list.append((tableL_el, tableR_el, sim_vector))
                 match = match + 1
                 i = i + 1
-                print("lista random match: " + str(match))
+                #print("lista random match: " + str(match))
 
         if sim_vector[0] < min_sim and no_match < tot / 2:
             if (tableL_el, tableR_el, sim_vector) not in result_list:
                 result_list.append((tableL_el, tableR_el, sim_vector))
                 no_match = no_match + 1
                 i = i + 1
-                print("lista random no match: " + str(no_match))
+                #print("lista random no match: " + str(no_match))
 
-    print(result_list[:4])
-    print(result_list[-15:])
+    #print(result_list[:4])
+    #print(result_list[-15:])
     return result_list
 
 
@@ -494,11 +494,11 @@ def csvTable2datasetRANDOM_extreme(tableL, tableR, indici, sim_function=lambda x
     result_list = []
 
     num_randomL = 10 * (math.log(len(tableLlist)))
-    print(num_randomL)
-    num_randomR = 10 * (math.log(len(tableRlist)))
-    print(num_randomR)
+    #print(num_randomL)
+    #num_randomR = 10 * (math.log(len(tableRlist)))
+    #print(num_randomR)
 
-    print("parsing table R")
+    #print("parsing table R")
     for i in range(len(tableLlist)):
         if i % 50 == 0:
             print(i)
@@ -520,7 +520,7 @@ def csvTable2datasetRANDOM_extreme(tableL, tableR, indici, sim_function=lambda x
                 # print(sim_vector[0])
                 result_list.append((tableL_el, tableR_el, sim_vector))
             j = j + 1
-    print("parsing table L")
+    #print("parsing table L")
     for k in range(len(tableRlist)):
         if k % 50 == 0:
             print(k)
@@ -542,8 +542,8 @@ def csvTable2datasetRANDOM_extreme(tableL, tableR, indici, sim_function=lambda x
                 result_list.append((tableL_el, tableR_el, sim_vector))
             j = j + 1
 
-    print(result_list[:4])
-    print(result_list[-4:])
+    #print(result_list[:4])
+    #print(result_list[-4:])
     return result_list, match, no_match, num_randomL, num_randomR
 
 
@@ -563,11 +563,11 @@ def csvTable2datasetRANDOM_extremeRIP(tableL, tableR, indici, ripA, ripB, sim_fu
     result_list = []
 
     num_randomL = ripA * (math.log(len(tableLlist)))
-    print(num_randomL)
+    #print(num_randomL)
     num_randomR = ripB * (math.log(len(tableRlist)))
-    print(num_randomR)
+    #print(num_randomR)
 
-    print("parsing table R")
+    #print("parsing table R")
     for i in range(len(tableLlist)):
         if i % 50 == 0:
             print(i)
@@ -635,40 +635,46 @@ def read_data_bf(ground_truth, tableL, tableR, indici, allsims, sim_function=lam
     result_list_NOmatch = []
     cos_sim_list = []
     '''costruisce lista dei match parsando i file di input'''
+    nn = 0
     for line_in_file in matches_list:
-        # line_in_file type: id_1, id_2
-        row1 = [item for item in tableLlist if item[0] == line_in_file[0]]
-        row2 = [item for item in tableRlist if item[0] == line_in_file[1]]
+        if nn > 10000: # smetti di cercare oltre questo limite
+            break
+        try:
+            # line_in_file type: id_1, id_2
+            row1 = [item for item in tableLlist if item[0] == line_in_file[0]]
+            row2 = [item for item in tableRlist if item[0] == line_in_file[1]]
 
-        tableL_el = []
-        tableR_el = []
-        for i1, i2 in indici:
-            tableL_el.append(row1[0][i1])
-            tableR_el.append(row2[0][i2])
+            tableL_el = []
+            tableR_el = []
+            for i1, i2 in indici:
+                tableL_el.append(row1[0][i1])
+                tableR_el.append(row2[0][i2])
 
-        stringa1 = concatenate_list_data(tableL_el)
-        stringa2 = concatenate_list_data(tableR_el)
+            stringa1 = concatenate_list_data(tableL_el)
+            stringa2 = concatenate_list_data(tableR_el)
 
-        # calcola la cos similarita della tupla i-esima
-        for s in allsims[:8]:
-            cos_sim = s(stringa1, stringa2)[0]
-            # print(cos_sim)
+            # calcola la similarita minima della tupla i-esima
+            cos_sim = 10
+            for s in allsims[:8]:
+                cos_sim = min(cos_sim, s(stringa1, stringa2)[0])
             cos_sim_list.append(cos_sim)
 
-        '''cos_sim = get_cosine(text_to_vector(stringa1), text_to_vector(stringa2))
-        cos_sim_list.append(cos_sim)
-'''
-        sim_vector = sim_function(tableL_el[0], tableR_el[0])  # Modificato
+            sim_vector = sim_function(tableL_el[0], tableR_el[0])  # Modificato
 
-        result_list_match.append((tableL_el, tableR_el, sim_vector, 1))
-        # min_cos_sim_match= valore minimo della cos_similarity di tutte quelle in match
-        min_cos_sim_match = min(cos_sim_list)
+            result_list_match.append((tableL_el, tableR_el, sim_vector, 1))
+            # min_cos_sim_match= valore minimo della similarity di tutte quelle in match
+            min_cos_sim_match = min(cos_sim_list)
+            nn += 1
+        except:
+            pass
 
     ##[1:] serve per togliere l id come attributo
     '''costruisce la lista dei NO_match calcolando un min cos similarity'''
+    j = 0
     i = 0
-    while i < len(result_list_match):
-
+    while i < len(result_list_match) and j < 2*len(result_list_match):
+        # smetti di cercare i non match oltre un certo limite
+        j += 1
         x = random.randint(1, len(tableLlist) - 1)
         y = random.randint(1, len(tableRlist) - 1)
         tableL_el = []
@@ -702,7 +708,8 @@ def read_data_bf(ground_truth, tableL, tableR, indici, allsims, sim_function=lam
     random.shuffle(result_list_match)
     for i in range(max(len(result_list_match), len(result_list_NOmatch))):
         result_list.append(result_list_match[i])
-        result_list.append(result_list_NOmatch[i])
+        if len(result_list_NOmatch) > i:
+            result_list.append(result_list_NOmatch[i])
 
     return result_list
 
@@ -741,29 +748,32 @@ def csv_2_datasetALTERNATE(ground_truth, tableL, tableR, indici, sim_function=la
     '''costruisce lista dei match parsando i file di input'''
     for line_in_file in matches_list:
         # line_in_file type: id_1, id_2
-        row1 = [item for item in tableLlist if item[0] == line_in_file[0]]
-        row2 = [item for item in tableRlist if item[0] == line_in_file[1]]
+        try :
+            row1 = [item for item in tableLlist if item[0] == line_in_file[0]]
+            row2 = [item for item in tableRlist if item[0] == line_in_file[1]]
 
-        tableL_el = []
-        tableR_el = []
-        for i1, i2 in indici:
-            tableL_el.append(row1[0][i1])
-            tableR_el.append(row2[0][i2])
+            tableL_el = []
+            tableR_el = []
+            for i1, i2 in indici:
+                tableL_el.append(row1[0][i1])
+                tableR_el.append(row2[0][i2])
 
-        stringa1 = concatenate_list_data(tableL_el)
-        stringa2 = concatenate_list_data(tableR_el)
+            stringa1 = concatenate_list_data(tableL_el)
+            stringa2 = concatenate_list_data(tableR_el)
 
-        # calcola la cos similarita della tupla i-esima
-        cos_sim = get_cosine(text_to_vector(stringa1), text_to_vector(stringa2))
-        # cos_sim=cos_sim2Str(str(stringa1),str(stringa2))
-        # print(cos_sim)
-        cos_sim_list.append(cos_sim)
+            # calcola la cos similarita della tupla i-esima
+            cos_sim = get_cosine(text_to_vector(stringa1), text_to_vector(stringa2))
+            # cos_sim=cos_sim2Str(str(stringa1),str(stringa2))
+            # print(cos_sim)
+            cos_sim_list.append(cos_sim)
 
-        sim_vector = sim_function(tableL_el, tableR_el)  # Modificato
+            sim_vector = sim_function(tableL_el, tableR_el)  # Modificato
 
-        result_list_match.append((tableL_el, tableR_el, sim_vector, 1))
-        # min_cos_sim_match= valore minimo della cos_similarity di tutte quelle in match
-        min_cos_sim_match = min(cos_sim_list)
+            result_list_match.append((tableL_el, tableR_el, sim_vector, 1))
+            # min_cos_sim_match= valore minimo della cos_similarity di tutte quelle in match
+            min_cos_sim_match = min(cos_sim_list)
+        except:
+            pass
 
     ##[1:] serve per togliere l id come attributo
     '''costruisce la lista dei NO_match calcolando un min cos similarity'''
@@ -927,11 +937,11 @@ def parsing_anhai_dataOnlyMatch(ground_truth, tableA, tableB, indici, sim_functi
             sim_vector = sim_function(tableA_el, tableB_el)  # Modificato
             cos_sim_list.append(cos_sim)
             result_list_match.append((tableA_el, tableB_el, sim_vector, 1))
-            if (len(result_list_match) % 10) == 0:
-                print(len(result_list_match))
+            #if (len(result_list_match) % 10) == 0:
+            #    print(len(result_list_match))
 
     min_cos_sim_match = min(cos_sim_list)
-    print("min_cos_sim_match" + str(min_cos_sim_match))
+    #print("min_cos_sim_match" + str(min_cos_sim_match))
 
     ##[1:] serve per togliere l id come attributo
     '''costruisce la lista dei NO_match calcolando un min cos similarity'''
@@ -1011,11 +1021,11 @@ def parsing_anhai_dataOnlyMatchCos(ground_truth, tableA, tableB, indici, sim_fun
             sim_vector = [cos_sim]  # sim_function(tableA_el,tableB_el) # Modificato
             cos_sim_list.append(cos_sim)
             result_list_match.append((tableA_el, tableB_el, sim_vector, 1))
-            if (len(result_list_match) % 10) == 0:
-                print(len(result_list_match))
+            #if (len(result_list_match) % 10) == 0:
+            #    print(len(result_list_match))
 
     min_cos_sim_match = min(cos_sim_list)
-    print("min_cos_sim_match" + str(min_cos_sim_match))
+    #print("min_cos_sim_match" + str(min_cos_sim_match))
 
     ##[1:] serve per togliere l id come attributo
     '''costruisce la lista dei NO_match calcolando un min cos similarity'''
@@ -1097,7 +1107,7 @@ def parsing_anhai_dataOnlyMatch4roundtraining(ground_truth, tableA, tableB, indi
             result_list_match.append((tableA_el, tableB_el, sim_vector, 1))
 
     min_cos_sim_match = min(cos_sim_list)
-    print("min_cos_sim_match" + str(min_cos_sim_match))
+    #print("min_cos_sim_match" + str(min_cos_sim_match))
 
     ##[1:] serve per togliere l id come attributo
     '''costruisce la lista dei NO_match calcolando un min cos similarity'''
@@ -1197,9 +1207,9 @@ def parsing_anhai_data(ground_truth, tableA, tableB, indici, sim_function=lambda
 def ratio_dupl_noDup4Anhai(dataset, index):
     sort_dataset = sorted(dataset, key=lambda tup: (tup[3], tup[2][index]))
     match_number = sum(map(lambda x: x[3] == 1, sort_dataset))
-    print("match_number: " + str(match_number))
+    #print("match_number: " + str(match_number))
     n = len(sort_dataset) - (match_number * 2)
-    print(n)
+    #print(n)
     listout = sort_dataset[n:]
     #    for i in range(105,115):
     #        print(listout[i])
@@ -1251,7 +1261,7 @@ def check_anhai_dataset(ground_truth, tableA, tableB, indici, sim_function=lambd
             result_list_match.append((tableA_el, tableB_el, sim_vector, 1))
             # min_cos_sim_match= valore minimo della cos_similarity di tutte quelle in match
     min_cos_sim_match = min(cos_sim_list)
-    print("min coseno match:" + str(min_cos_sim_match))
+    #print("min coseno match:" + str(min_cos_sim_match))
 
     for line_in_file in trainFilelist:
         # else:
@@ -1280,13 +1290,13 @@ def check_anhai_dataset(ground_truth, tableA, tableB, indici, sim_function=lambd
 
             result_list_NOmatch.append((tableA_el, tableB_el, sim_vector, 0))
 
-    print(max(len(result_list_match), len(result_list_NOmatch)))
-    print(len(result_list_match))
-    print(len(result_list_NOmatch))
+    #print(max(len(result_list_match), len(result_list_NOmatch)))
+    #print(len(result_list_match))
+    #print(len(result_list_NOmatch))
 
-    print("match_tuple: " + str(len(result_list_match)))
-    print("no match_tuple: " + str(len(result_list_NOmatch)))
-    print("No_match_with_cos_too_small: " + str(No_match_with_cos_too_small))
+    #print("match_tuple: " + str(len(result_list_match)))
+    #print("no match_tuple: " + str(len(result_list_NOmatch)))
+    #print("No_match_with_cos_too_small: " + str(No_match_with_cos_too_small))
 
 
 ''' ############# Dataset splitting ####################'''
@@ -1311,7 +1321,7 @@ def splitting_dataSet(percentuale, dataSetOriginal):
 
 
 def splitDataSet01WithPercent(percent, dataSetOriginal, percent1, percent0):
-    print(dataSetOriginal)
+    #print(dataSetOriginal)
     lunghezza = int(round(len(dataSetOriginal) * percent))
     percentuale1 = int(lunghezza * percent1)
     # print(percentuale1)
@@ -1321,8 +1331,8 @@ def splitDataSet01WithPercent(percent, dataSetOriginal, percent1, percent0):
         percentuale1 = percentuale1 + 1
     output = []
     i = 0
-    print('percentuale 1= ' + str(percentuale1))
-    print('percentuale 0= ' + str(percentuale0))
+    #print('percentuale 1= ' + str(percentuale1))
+    #print('percentuale 0= ' + str(percentuale0))
 
     while i < lunghezza:
 
@@ -1353,8 +1363,8 @@ def splitDataSetSIMWithPercent(percent, dataSetOriginal, percent1, percent0):
         percentuale1 = percentuale1 + 1
     output = []
     i = 0
-    print('percentuale 1= ' + str(percentuale1))
-    print('percentuale 0= ' + str(percentuale0))
+    #print('percentuale 1= ' + str(percentuale1))
+    #print('percentuale 0= ' + str(percentuale0))
     while i < lunghezza:
         for elem in dataSetOriginal:
             if int(elem[3]) == 1 and percentuale1 != 0:
@@ -1429,11 +1439,11 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
             if el[2][0] > max_sim and el not in result_list:
                 result_list.append(el)
                 match = match + 1
-                print("lista lsh match: " + str(match))
+                #print("lista lsh match: " + str(match))
             if el[2][0] < min_sim and el not in result_list:
                 result_list.append(el)
                 no_match = no_match + 1
-                print("lista lsh no match: " + str(no_match))
+                #print("lista lsh no match: " + str(no_match))
 
     while loop_i < 220000:  # 300000:# and (match<totale or no_match<totale):
         # if loop_i%1000000==0:
@@ -1460,7 +1470,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     match = match + 1
 
-                    print("lista random match: " + str(match) + " loop_i: " + str(loop_i))
+                    #print("lista random match: " + str(match) + " loop_i: " + str(loop_i))
                     loop_i = 0
                 else:
                     loop_i = loop_i + 1
@@ -1470,7 +1480,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                     result_list.append((tableL_el, tableR_el, sim_vector))
                     no_match = no_match + 1
                     loop_i = 0
-                    print("lista random no match: " + str(no_match) + " loop_i: " + str(loop_i))
+                    #print("lista random no match: " + str(no_match) + " loop_i: " + str(loop_i))
                 else:
                     loop_i = loop_i + 1
 
@@ -1482,7 +1492,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                 copy_match_list.append((tableL_el, tableL_el2, sim_vector))
                 copy_match = copy_match + 1
 
-                print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
+                #print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
                 # print(tableL_el,tableL_el2,sim_vector)
                 loop_i = 0
             # else:
@@ -1493,7 +1503,7 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                 copy_match_list.append((tableR_el, tableR_el2, sim_vector))
                 copy_match = copy_match + 1
 
-                print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
+                #print("lista copy_match match: " + str(copy_match) + " loop_i: " + str(loop_i))
                 # print(tableR_el,tableR_el2,sim_vector)
                 loop_i = 0
 
@@ -1503,14 +1513,14 @@ def csvTable2datasetRANDOM_likeGold(tableL, tableR, min_sim, max_sim, indici, da
                 result_list.append((tableL_el, tableR_el, sim_vector))
                 no_match = no_match + 1
                 loop_i = 0
-                print("lista random no match wo cos_sim: " + str(no_match) + " loop_i: " + str(loop_i))
+                #print("lista random no match wo cos_sim: " + str(no_match) + " loop_i: " + str(loop_i))
             else:
                 loop_i = loop_i + 1
         else:
             loop_i = loop_i + 1
 
-    print(result_list[:4])
-    print(result_list[-15:])
+    #print(result_list[:4])
+    #print(result_list[-15:])
     return result_list
 
 # ground_truth='walmart_amazon/matches_walmart_amazon.csv'

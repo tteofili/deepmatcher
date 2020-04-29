@@ -21,7 +21,7 @@ from dm_train import train_dm
 from dm_train import eval_dm
 from dm_train import pretrain_dm
 from dm_train import finetune_dm
-from dm_train import pt_ft_dm_classifier
+from dm_train import pt_ft_dm_classifier, pt_ft_dm_full
 from dm_train import join
 import sim_function
 
@@ -44,6 +44,7 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
     else:
 
         # Crea il dataset.
+        print('creating match/nomatch dataset')
         data = csv_2_datasetALTERNATE(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf)
 
         print(data[0])
@@ -240,13 +241,13 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         all_train = join(train, valid, test, sim_train, sim_valid, DATASET_NAME)
 
         # Inizializza un nuovo modello.
-        finetuned_model_5 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_5, validationLab_5)
-        finetuned_model_10 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_10, validationLab_10)
-        finetuned_model_25 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_25, validationLab_25)
-        finetuned_model_50 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_50, validationLab_50)
-        finetuned_model_75 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_75, validationLab_75)
-        finetuned_model_100 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_100, validationLab_100)
-        finetuned_model_200 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_200, validationLab_200)
+        finetuned_model_5 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_5, validationLab_5)
+        finetuned_model_10 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_10, validationLab_10)
+        finetuned_model_25 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_25, validationLab_25)
+        finetuned_model_50 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_50, validationLab_50)
+        finetuned_model_75 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_75, validationLab_75)
+        finetuned_model_100 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_100, validationLab_100)
+        finetuned_model_200 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_200, validationLab_200)
 
         f_list = []
         f_list.append(eval_dm(finetuned_model_200, testLab_200))
@@ -272,8 +273,6 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
 
         total_tup_pt = len(vinsim_data)
 
-        tuplecount_ft = [200, 100, 75, 50, 25, 10, 5]
-
         write_file_fScore(DATASET_NAME, funsimstr, f_list, model_vin, "f_score", total_tup_pt)
 
     kappa = [int(tot_pt / 2)]  # 100,250,500,1000]
@@ -281,19 +280,32 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
     for i in range(len(kappa)):
         trainK(kappa[i])
 
-
+'''
 DATASET_NAME = 'fodo_zaga'
 GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/matches_fodors_zagats.csv'
 TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/fodors.csv'
 TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/zagats.csv'
 ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4), (5, 5), (6, 6)]
+'''
 
-simf = lambda a, b: sim_function.sim_bf_fz2b(a, b)
-funsimstr = "sim_bf_fz2b"
+'''DATASET_NAME = 'dirty_dblp_scholar'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
+'''
+DATASET_NAME = 'abt_buy_anhai'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3)]
+
+simf = lambda a, b: sim_function.sim_bf2_ab(a, b)
+funsimstr = "sim_bf2_ab"
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
 soglia = 0.03  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
-runs = 3
+runs = 1
 for i in range(runs):
     training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)

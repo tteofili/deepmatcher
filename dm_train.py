@@ -125,7 +125,7 @@ def train_dm(name, train, valid, test, cut):
 
     print("TRAINING with "+str(len(train))+" samples")
     # train default model with standard dataset
-    model.run_train(trainLab, validationLab, best_save_path='best_default_model.pth', epochs=1)
+    model.run_train(trainLab, validationLab, best_save_path='best_default_model.pth', epochs=15)
 
     return model, trainLab, validationLab, testLab
 
@@ -248,7 +248,7 @@ def pt_ft_dm_classifier(all_train, name, sim_train, sim_valid, trainLab, validat
     print("PRETRAINING with "+str(len(trainSIM))+" samples")
     # pretrain vinsim model using similarity dataset
     pretrained_model.run_train(trainSIM, validationSIM, best_save_path='best_pretrained_model.pth',
-                               criterion=torch.nn.BCELoss(), epochs=15, optimizer=dm.optim.Optimizer(lr=0.001), batch_size=32)
+                               criterion=torch.nn.MSELoss(), epochs=15, optimizer=dm.optim.Optimizer(lr=0.001), batch_size=16)
 
     # initialize default deepmatcher model
     base_model = dm.MatchingModel()
