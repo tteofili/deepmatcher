@@ -11,9 +11,9 @@ import numpy as np
 import sim_function
 
 simfunctions = [
-    lambda t1, t2: sim_function.jaro(t1, t2),
     lambda t1, t2: sim_function.sim_bf_dirty_scho(t1, t2),
     lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
+    lambda t1, t2: sim_function.jaro(t1, t2),
     lambda t1, t2: sim_function.sim_jacc(t1, t2),
     lambda t1, t2: sim_function.sim_cos(t1, t2),
     lambda t1, t2: sim_function.sim_hamming(t1, t2),
@@ -43,8 +43,7 @@ get_lambda_name = lambda l: getsource(l).split('=')[0].strip()
 
 def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, tot_copy):
     best = []
-    for r in range(3):
-
+    for r in range(1):
         bestFun = lambda t1, t2: t1 == t2
         lowestMSE = 1e10
         # for each sim function
@@ -58,56 +57,6 @@ def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, t
                     max_sim = 0.82
 
                 min_sim = min(min_sim_Match, max_sim_noMatch)  # -soglia
-
-                def unflat(data, target_idx, shrink=False):
-
-                    def cut_string(s):
-                        if len(s) >= 1000:
-                            return s[:1000]
-                        else:
-                            return s
-
-                    temp = []
-                    id = 0
-                    for r in data:
-                        t1 = r[0]
-                        t2 = r[1]
-                        lb = r[target_idx]
-                        if isinstance(lb, list):
-                            lb = lb[0]
-                        if (shrink):
-                            t1 = list(map(cut_string, t1))
-                            t2 = list(map(cut_string, t2))
-                        row = []
-                        row.append(id)
-                        row.append(lb)
-                        for a in t1:
-                            row.append(a)
-                        for a in t2:
-                            row.append(a)
-                        temp.append(row)
-                        id = id + 1
-
-                    return temp
-
-                deepmatcher_data = unflat(data, 3)
-
-
-                # Split in train, validation and test set.
-                def split_training_valid_test(data, SPLIT_FACTOR=0.8):
-                    bound = int(len(data) * SPLIT_FACTOR)
-                    train = data[:bound]
-                    remain = data[bound:]
-                    bound2 = int(len(remain) * 0.5)
-                    test = remain[bound2:]
-                    valid = remain[:bound2]
-
-                    return train, valid, test
-
-
-                # Tutti i successivi addestramenti partiranno dal 100% di train (80% di tutti i dati).
-                # Le tuple in valid non verranno mai usate per addestrare ma solo per testare i modelli.
-                train, valid, test = split_training_valid_test(deepmatcher_data)
 
                 datapt_hash = minHash_lsh(t1_file, t2_file, indexes, simf)
 
@@ -139,8 +88,6 @@ def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, t
                     random_tuples0sort = sorted(random_tuples0, key=lambda tup: (tup[2][0]))
                     plot_pretrain(random_tuples0sort)
 
-                    total_ptData = len(datapt_hash)
-
                     random_tuples1 = random_tuples0sort[:k]
                     random_tuples2 = random_tuples0sort[-k:]
 
@@ -152,15 +99,6 @@ def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, t
                     # vinsim_data += random_tuples
                     # Shuffle.
                     shuffle(vinsim_data)
-
-
-                    # Split in training set e validation set.
-                    def split_training_valid(data, SPLIT_FACTOR=0.8):
-                        bound = int(len(data) * SPLIT_FACTOR)
-                        train = data[:bound]
-                        valid = data[bound:]
-
-                        return train, valid
 
                     plt.xlabel(get_lambda_name(simf))
 

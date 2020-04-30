@@ -15,6 +15,8 @@ from .data import MatchingIterator
 from .optim import Optimizer, SoftNLLLoss
 from .utils import tally_parameters
 
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
 try:
     get_ipython
     from tqdm import tqdm_notebook as tqdm
@@ -41,24 +43,29 @@ class Statistics(object):
         self.tns = 0
         self.fps = 0
         self.fns = 0
+        self.f11 = 0
+        self.f10 = 0
         self.start_time = time.time()
 
-    def update(self, loss=0, tps=0, tns=0, fps=0, fns=0):
+    def update(self, loss=0, tps=0, tns=0, fps=0, fns=0, f11=0, f10=0):
         examples = tps + tns + fps + fns
         self.loss_sum += loss * examples
         self.tps += tps
         self.tns += tns
         self.fps += fps
         self.fns += fns
+        self.f11 += f11
+        self.f10 += f10
         self.examples += examples
 
     def loss(self):
         return self.loss_sum / self.examples
 
     def f1(self):
+        agg = '('+str(self.f10)+','+str(self.f11)+')'
         prec = self.precision()
         recall = self.recall()
-        return 2 * prec * recall / max(prec + recall, 1)
+        return str(2 * prec * recall / max(prec + recall, 1))+agg
 
     def precision(self):
         return 100 * self.tps / max(self.tps + self.fps, 1)
@@ -217,6 +224,8 @@ class Runner(object):
         if progress_style == 'bar':
             pbar = pyprind.ProgBar(len(run_iter) // log_freq, bar_char='█', width=30)
 
+        f0 = 0
+        f1 = 0
         for batch_idx, batch in enumerate(run_iter):
             batch_start = time.time()
             datatime += batch_start - batch_end
@@ -238,7 +247,15 @@ class Runner(object):
                 #print("l:"+str(loss))
 
             if hasattr(batch, label_attr):
-                scores = Runner._compute_scores(output, getattr(batch, label_attr), threshold=0.5)
+                target = getattr(batch, label_attr)
+                scores = Runner._compute_scores(output, target, threshold=0.5)
+                if run_type == 'EVAL' and output.shape[1] == 2:
+                    predictions = output.max(1)[1].data
+                    report = classification_report(target.int().detach().numpy(), predictions.int().detach().numpy(), output_dict=True)
+                    lf1 = report['1']['f1-score']
+                    lf0 = report['0']['f1-score']
+                    f0 += lf0
+                    f1 += lf1
             else:
                 scores = [0] * 4
 
@@ -270,6 +287,13 @@ class Runner(object):
 
             batch_end = time.time()
             runtime += batch_end - batch_start
+
+        if run_type == 'EVAL':
+            f0 = f0 / len(run_iter)
+            f1 = f1 / len(run_iter)
+            print("***F1-MATCH-NOMATCH***")
+            print('f1-1:'+str(f1))
+            print('f1-0:'+str(f0))
 
         if progress_style == 'tqdm-bar':
             pbar.close()

@@ -76,10 +76,11 @@ def bf(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
         lowestMSE = 1e10
         for simf in sim_functions:
             name = get_lambda_name(simf)
-            #data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], simf)
-            data = read_data_bf(gt_file, t1_file, t2_file, [k], simfunctions,  simf)
+            data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[4])
+            #data = read_data_bf(gt_file, t1_file, t2_file, [k], simfunctions,  simf)
             perc = len(data) * 0.05
-            npdata = np.array(data[:int(perc)])
+            split = int(max(perc / 2, 20))
+            npdata = np.array(data[:split] + data[-split:])
             npdata[:, 2] = unflat(npdata[:, 2])
             ones = npdata[np.where(npdata[:, 3] == 1)][:, 3]
             ones_sim = npdata[np.where(npdata[:, 3] == 1)][:, 2]
@@ -107,9 +108,9 @@ def bf2(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
     best = []
     for k in attr_indexes:
         print('getting attribute values')
-        data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[4])
+        data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[2])
         perc = len(data) * 0.05
-        split = int(min(perc/2, 20))
+        split = int(max(perc/2, 50))
         npdata = np.array(data[:split] + data[-split:])
         X = np.zeros([len(npdata), len(sim_functions)])
         Y = np.zeros(len(npdata))
@@ -125,17 +126,21 @@ def bf2(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
             Y[tc] = t[3]
             tc += 1
         print('fitting classifier')
-        clf = linear_model.SGDClassifier(max_iter=1000, tol=1e-3)
+        clf = linear_model.LinearRegression()
         clf.fit(X, Y)
-        weights = clf.coef_[0]
+        print(f'score: {clf.score(X,Y)}')
+        weights = clf.coef_
         comb = []
         combprint = []
-        normalized_weights = weights + abs(min(weights))
+        normalized_weights = weights
+        if min(weights) < 0:
+            normalized_weights = normalized_weights + abs(min(weights))
         wsum = np.sum(normalized_weights)
-        for c in range(len(weights)):
-            if normalized_weights[c] > wsum * 0.01: # ignore 'contributes' below 1%
-                comb.append([sim_functions[c], normalized_weights[c]/wsum])
-                combprint.append([get_lambda_name(sim_functions[c]), normalized_weights[c]/wsum])
+        '''
+         for c in range(len(weights)):
+            comb.append([sim_functions[c], normalized_weights[c]/wsum])
+            combprint.append([get_lambda_name(sim_functions[c]), normalized_weights[c]/wsum])
+        '''
         '''for c in range(len(weights)):
             comb.append([sim_functions[c], weights[c]])
             combprint.append([get_lambda_name(sim_functions[c]), weights[c]])'''

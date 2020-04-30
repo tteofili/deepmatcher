@@ -127,13 +127,14 @@ def train_dm(name, train, valid, test, cut):
     # train default model with standard dataset
     model.run_train(trainLab, validationLab, best_save_path='best_default_model.pth', epochs=15)
 
+    eval_dm(model, validationLab)
     return model, trainLab, validationLab, testLab
 
 
 def eval_dm(model, data):
     return model.run_eval(data)
 
-def pt_ft_dm_full(all_train, name, sim_train, sim_valid, trainLab, validationLab):
+def pt_ft_dm_full(all_train, name, sim_train, sim_valid, trainLab, validationLab, ft=True):
     names = []
     names.append('id')
     names.append('label')
@@ -173,7 +174,7 @@ def pt_ft_dm_full(all_train, name, sim_train, sim_valid, trainLab, validationLab
     print("--> PRETRAIN VINSIM MODEL <--")
     # pretrain vinsim model using similarity dataset
     pretrained_model.run_train(trainSIM, validationSIM, best_save_path='best_pretrained_model.pth',
-                               criterion=torch.nn.MSELoss(), epochs=15)
+                               criterion=torch.nn.SmoothL1Loss(), epochs=15, batch_size=16)
 
     # create softmax layer as per dm original model
     softmax_layer = torch.nn.Sequential(collections.OrderedDict([
@@ -192,21 +193,17 @@ def pt_ft_dm_full(all_train, name, sim_train, sim_valid, trainLab, validationLab
     # attach default deep matcher classifier to pretrained model
     pretrained_model.classifier = updated_classifier
 
-    '''run_iter = dm.data.MatchingIterator(
-        trainLab,
-        trainLab,
-        train=False,
-        batch_size=4,
-        device='cpu',
-        sort_in_buckets=False)
-    init_batch = next(run_iter.__iter__())
-    pretrained_model.forward(init_batch)
-    '''
     print(pretrained_model)
 
-    print("--> FINETUNE PRETRAINED MODEL <--")
-    # fine tune pretrained model with standard dataset
-    pretrained_model.run_train(trainLab, validationLab, best_save_path='best_finetuned_model.pth', epochs=15)
+    if ft:
+        print("--> FINETUNE PRETRAINED MODEL <--")
+        # fine tune pretrained model with standard dataset
+        pretrained_model.run_train(trainLab, validationLab, best_save_path='best_finetuned_model.pth', epochs=15)
+    try :
+        pretrained_model.initialize(validationLab)
+        eval_dm(pretrained_model, validationLab)
+    except:
+        pass
     return pretrained_model
 
 def pt_ft_dm_classifier(all_train, name, sim_train, sim_valid, trainLab, validationLab):
@@ -248,8 +245,9 @@ def pt_ft_dm_classifier(all_train, name, sim_train, sim_valid, trainLab, validat
     print("PRETRAINING with "+str(len(trainSIM))+" samples")
     # pretrain vinsim model using similarity dataset
     pretrained_model.run_train(trainSIM, validationSIM, best_save_path='best_pretrained_model.pth',
-                               criterion=torch.nn.MSELoss(), epochs=15, optimizer=dm.optim.Optimizer(lr=0.001), batch_size=16)
+                               criterion=torch.nn.SmoothL1Loss(), epochs=15, optimizer=dm.optim.Optimizer(lr=0.001), batch_size=16)
 
+    eval_dm(pretrained_model, validationSIM)
     # initialize default deepmatcher model
     base_model = dm.MatchingModel()
     base_model.initialize(all_train)
@@ -263,4 +261,5 @@ def pt_ft_dm_classifier(all_train, name, sim_train, sim_valid, trainLab, validat
     # fine tune pretrained model with standard dataset
     pretrained_model.run_train(trainLab, validationLab, best_save_path='best_finetuned_model.pth', epochs=15,
                                optimizer=dm.optim.Optimizer(lr=0.001))
+    eval_dm(pretrained_model, validationLab)
     return pretrained_model
