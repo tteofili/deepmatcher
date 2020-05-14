@@ -79,7 +79,7 @@ def bf(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
             data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[4])
             #data = read_data_bf(gt_file, t1_file, t2_file, [k], simfunctions,  simf)
             perc = len(data) * 0.05
-            split = int(max(perc / 2, 20))
+            split = int(min(perc / 2, 50))
             npdata = np.array(data[:split] + data[-split:])
             npdata[:, 2] = unflat(npdata[:, 2])
             ones = npdata[np.where(npdata[:, 3] == 1)][:, 3]
@@ -110,7 +110,7 @@ def bf2(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
         print('getting attribute values')
         data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[2])
         perc = len(data) * 0.05
-        split = int(max(perc/2, 50))
+        split = int(min(perc/2, 50))
         npdata = np.array(data[:split] + data[-split:])
         X = np.zeros([len(npdata), len(sim_functions)])
         Y = np.zeros(len(npdata))
@@ -126,24 +126,22 @@ def bf2(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
             Y[tc] = t[3]
             tc += 1
         print('fitting classifier')
-        clf = linear_model.LinearRegression()
-        clf.fit(X, Y)
-        print(f'score: {clf.score(X,Y)}')
-        weights = clf.coef_
+        score = 0
+        clf = linear_model.SGDClassifier(loss='perceptron')
+        while score < 0.8:
+            clf.fit(X, Y)
+            score = clf.score(X, Y)
+            print(f'score: {score}')
+        weights = clf.coef_[0]
         comb = []
         combprint = []
         normalized_weights = weights
         if min(weights) < 0:
             normalized_weights = normalized_weights + abs(min(weights))
         wsum = np.sum(normalized_weights)
-        '''
-         for c in range(len(weights)):
+        for c in range(len(weights)):
             comb.append([sim_functions[c], normalized_weights[c]/wsum])
             combprint.append([get_lambda_name(sim_functions[c]), normalized_weights[c]/wsum])
-        '''
-        '''for c in range(len(weights)):
-            comb.append([sim_functions[c], weights[c]])
-            combprint.append([get_lambda_name(sim_functions[c]), weights[c]])'''
         comb.sort(key=operator.itemgetter(1), reverse=True)
         combprint.sort(key=operator.itemgetter(1), reverse=True)
 

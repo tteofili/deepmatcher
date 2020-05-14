@@ -766,9 +766,12 @@ def csv_2_datasetALTERNATE(ground_truth, tableL, tableR, indici, sim_function=la
             # cos_sim=cos_sim2Str(str(stringa1),str(stringa2))
             # print(cos_sim)
             cos_sim_list.append(cos_sim)
-
-            sim_vector = sim_function(tableL_el, tableR_el)  # Modificato
-
+            try :
+                sim_vector = sim_function(tableL_el, tableR_el)  # Modificato
+            except:
+                sim_vector = sim_function(stringa1, stringa2)
+                tableL_el = stringa1
+                tableR_el = stringa2
             result_list_match.append((tableL_el, tableR_el, sim_vector, 1))
             # min_cos_sim_match= valore minimo della cos_similarity di tutte quelle in match
             min_cos_sim_match = min(cos_sim_list)
@@ -798,7 +801,12 @@ def csv_2_datasetALTERNATE(ground_truth, tableL, tableR, indici, sim_function=la
 
         # controlla che la tupla che sto aggiungendo abbia una cos_similarity maggiore del min di quelle in match
         if cos_sim > min_cos_sim_match:
-            sim_vector = sim_function(tableL_el, tableR_el)
+            try:
+                sim_vector = sim_function(tableL_el, tableR_el)  # Modificato
+            except:
+                sim_vector = sim_function(stringa1, stringa2)
+                tableL_el = stringa1
+                tableR_el = stringa2
 
             if (tableL_el, tableR_el, sim_vector, 1) not in result_list_match:
                 result_list_NOmatch.append((tableL_el, tableR_el, sim_vector, 0))

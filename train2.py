@@ -89,10 +89,16 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
             row = []
             row.append(id)
             row.append(lb)
-            for a in t1:
-                row.append(a)
-            for a in t2:
-                row.append(a)
+            if isinstance(t1, list):
+                for a in t1:
+                    row.append(a)
+            else:
+                row.append(t1)
+            if isinstance(t2, list):
+                for a in t2:
+                    row.append(a)
+            else:
+                row.append(t2)
             temp.append(row)
             id = id + 1
 
@@ -241,13 +247,13 @@ def training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, sog
         all_train = join(train, valid, test, sim_train, sim_valid, DATASET_NAME)
 
         # Inizializza un nuovo modello.
-        finetuned_model_5 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_5, validationLab_5)
-        finetuned_model_10 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_10, validationLab_10)
-        finetuned_model_25 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_25, validationLab_25)
-        finetuned_model_50 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_50, validationLab_50)
-        finetuned_model_75 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_75, validationLab_75)
-        finetuned_model_100 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_100, validationLab_100)
-        finetuned_model_200 = pt_ft_dm_full(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_200, validationLab_200)
+        finetuned_model_5 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_5, validationLab_5)
+        finetuned_model_10 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_10, validationLab_10)
+        finetuned_model_25 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_25, validationLab_25)
+        finetuned_model_50 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_50, validationLab_50)
+        finetuned_model_75 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_75, validationLab_75)
+        finetuned_model_100 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_100, validationLab_100)
+        finetuned_model_200 = pt_ft_dm_classifier(all_train, DATASET_NAME, sim_train, sim_valid, trainLab_200, validationLab_200)
 
         f_list = []
         f_list.append(eval_dm(finetuned_model_200, testLab_200))
@@ -294,18 +300,44 @@ TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
 TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
 ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
 '''
-DATASET_NAME = 'abt_buy_anhai'
+'''DATASET_NAME = 'abt_buy_anhai'
 GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
 TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
 TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3)]
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3)]'''
 
-simf = lambda a, b: sim_function.sim_bf2_ab(a, b)
-funsimstr = "sim_bf2_ab"
+
+
+'''DATASET_NAME = 'beers'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
+
+simf = lambda a, b: sim_function.sim_bf2_beers(a, b)
+funsimstr = "sim_bf2_beers"'''
+
+'''DATASET_NAME = 'walmart_amazon'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/matches_walmart_amazon.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/walmart.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/amazonw.csv'
+ATT_INDEXES = [(5, 9), (4, 5),(3, 3),(14, 4), (6, 11)]'''
+
+
+DATASET_NAME = 'dirty_walmart_amazon'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2),(3, 3),(4, 4), (5, 5)]
+
+
+simf = lambda a, b: sim_function.sim_bf2_dwa(a, b)
+funsimstr = "sim_bf2_dwa"
+
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
-soglia = 0.03  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
+soglia = 0.1  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 runs = 1
 for i in range(runs):
     training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)

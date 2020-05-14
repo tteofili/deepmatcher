@@ -9,7 +9,7 @@ from sim_function import min_cos
 from random import shuffle
 import numpy as np
 import sim_function
-
+'''
 simfunctions = [
     lambda t1, t2: sim_function.sim_bf_dirty_scho(t1, t2),
     lambda t1, t2: sim_function.sim_bf_scho(t1, t2),
@@ -35,7 +35,7 @@ simfunctions = [
     lambda t1, t2: sim_function.sim_bert(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_sbert(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_sbert2(t1.split(), t2.split()),
-]
+]'''
 from inspect import getsource
 
 get_lambda_name = lambda l: getsource(l).split('=')[0].strip()
@@ -48,18 +48,18 @@ def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, t
         lowestMSE = 1e10
         # for each sim function
         for simf in simfunctions:
+            print(f'using sim {get_lambda_name(simf)}')
             data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, indexes, simf)
+            print('data found')
             if len(data) > 0:
                 #data = read_data_bf(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf)
                 min_sim_Match, max_sim_noMatch = plot_graph(data)
                 max_sim = soglia + max(min_sim_Match, max_sim_noMatch)
-                if max_sim > 0.94:
-                    max_sim = 0.82
 
                 min_sim = min(min_sim_Match, max_sim_noMatch)  # -soglia
 
                 datapt_hash = minHash_lsh(t1_file, t2_file, indexes, simf)
-
+                print('minhash done')
                 kappa = [int(tot_pt / 2)]  # 100,250,500,1000]
                 # kappa=[tot_pt]#100,250,500,1000]
                 for i in range(len(kappa)):
@@ -83,6 +83,8 @@ def find_sim(gt_file, t1_file, t2_file, indexes, simfunctions, soglia, tot_pt, t
 
                     random_tuples0 = csvTable2datasetRANDOM_likeGold(t1_file, t2_file, min_sim, max_sim, indexes,
                                                                      datapt_hash, min_cos_sim, tot_copy, simf)
+
+                    print('random tuples done')
 
                     random.shuffle(random_tuples0)
                     random_tuples0sort = sorted(random_tuples0, key=lambda tup: (tup[2][0]))

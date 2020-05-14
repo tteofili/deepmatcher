@@ -38,20 +38,12 @@ def randomString(stringLength=8):
 
 simfunctions = [
     lambda t1, t2: sim_function.jaro(t1, t2),
-    lambda t1, t2: sim_function.sim_jacc(t1, t2),
-    lambda t1, t2: sim_function.sim_cos(t1, t2),
-    lambda t1, t2: sim_function.sim_hamming(t1, t2),
-    lambda t1, t2: sim_function.sim_lcs(t1, t2),
     lambda t1, t2: sim_function.sim_lev(t1, t2),
-    lambda t1, t2: sim_function.sim_ngram(t1, t2),
-    lambda t1, t2: sim_function.sim_sodi(t1, t2),
+    lambda t1, t2: sim_function.sim_cos(t1, t2),
     lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),
-    lambda t1, t2: sim_function.jaro(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),
-    lambda t1, t2: sim_function.sim_lcs(t1.split(), t2.split()),
-    lambda t1, t2: sim_function.sim_lev(t1.split(), t2.split()),
     lambda t1, t2: sim_function.sim_ngram(t1.split(), t2.split()),
 ]
 '''
@@ -269,18 +261,18 @@ def trainK(k, data, min_sim, max_sim, t1_file, t2_file, indexes, dataset_name, d
     all_train = join(train, valid, test, sim_train, sim_valid, dataset_name)
 
     # Inizializza un nuovo modello.
-    finetuned_model_5 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_5, validationLab_5)
-    finetuned_model_10 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_10,
+    finetuned_model_5 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_5, validationLab_5)
+    finetuned_model_10 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_10,
                                              validationLab_10)
-    finetuned_model_25 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_25,
+    finetuned_model_25 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_25,
                                              validationLab_25)
-    finetuned_model_50 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_50,
+    finetuned_model_50 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_50,
                                              validationLab_50)
-    finetuned_model_75 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_75,
+    finetuned_model_75 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_75,
                                              validationLab_75)
-    finetuned_model_100 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_100,
+    finetuned_model_100 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_100,
                                               validationLab_100)
-    finetuned_model_200 = pt_ft_dm_full(all_train, dataset_name, sim_train, sim_valid, trainLab_200,
+    finetuned_model_200 = pt_ft_dm_classifier(all_train, dataset_name, sim_train, sim_valid, trainLab_200,
                                               validationLab_200)
 
     f_list = []
@@ -347,31 +339,21 @@ ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
-soglia = 0.01  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
+soglia = 0.05  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 runs = 1
 
 datasets = [
-    [('%sabt_buy_anhai/all.csv' % base_dir), ('%sabt_buy_anhai/tableA.csv' % base_dir),
-     ('%sabt_buy_anhai/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3)], 'abt_buy_anhai',
-     ('%scustom/' % base_dir)],
-    [('%sfodo_zaga/matches_fodors_zagats.csv' % base_dir),
-     ('%sfodo_zaga/fodors.csv' % base_dir),
-     ('%sfodo_zaga/zagats.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], 'fodo_zaga',
-     ('%scustom/' % base_dir)],
-    [('%sdirty_dblp_scholar/all.csv' % base_dir), ('%sdirty_dblp_scholar/tableA.csv' % base_dir),
-     ('%sdirty_dblp_scholar/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_scholar',
-     ('%scustom/' % base_dir)],
-    [('%sdirty_dblp_acm/all.csv' % base_dir), ('%sdirty_dblp_acm/tableA.csv' % base_dir),
-     ('%sdirty_dblp_acm/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_acm',
-     ('%scustom/' % base_dir)],
     [('%sdirty_walmart_amazon/all.csv' % base_dir), ('%sdirty_walmart_amazon/tableA.csv' % base_dir),
-     ('%sdirty_walmart_amazon/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_walmart_amazon',
+     ('%sdirty_walmart_amazon/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], 'dirty_walmart_amazon',
      ('%scustom/' % base_dir)],
     [('%sdirty_amazon_itunes/all.csv' % base_dir), ('%sdirty_amazon_itunes/tableA.csv' % base_dir),
      ('%sdirty_amazon_itunes/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_amazon_itunes',
      ('%scustom/' % base_dir)],
     [('%sdblp_scholar/DBLP-Scholar-perfectMapping.csv' % base_dir), ('%sdblp_scholar/DBLP1.csv' % base_dir),
      ('%sdblp_scholar/Scholar.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dblp_scholar',
+     ('%scustom/' % base_dir)],
+    [('%sdirty_dblp_acm/all.csv' % base_dir), ('%sdirty_dblp_acm/tableA.csv' % base_dir),
+     ('%sdirty_dblp_acm/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_acm',
      ('%scustom/' % base_dir)],
     [('%samazon_google/Amazon_GoogleProducts-perfectMapping.csv' % base_dir),
      ('%samazon_google/AmazonAG.csv' % base_dir),
@@ -382,6 +364,16 @@ datasets = [
      ('%scustom/' % base_dir)],
     [('%swalmart_amazon/matches_walmart_amazon.csv' % base_dir), ('%swalmart_amazon/walmart.csv' % base_dir),
      ('%swalmart_amazon/amazonw.csv' % base_dir), [(5, 9), (4, 5),(3, 3),(14, 4),(6, 11)], 'walmart_amazon',
+     ('%scustom/' % base_dir)],
+    [('%sabt_buy_anhai/all.csv' % base_dir), ('%sabt_buy_anhai/tableA.csv' % base_dir),
+     ('%sabt_buy_anhai/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3)], 'abt_buy_anhai',
+     ('%scustom/' % base_dir)],
+    [('%sfodo_zaga/matches_fodors_zagats.csv' % base_dir),
+     ('%sfodo_zaga/fodors.csv' % base_dir),
+     ('%sfodo_zaga/zagats.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (5, 5)], 'fodo_zaga',
+     ('%scustom/' % base_dir)],
+    [('%sdirty_dblp_scholar/all.csv' % base_dir), ('%sdirty_dblp_scholar/tableA.csv' % base_dir),
+     ('%sdirty_dblp_scholar/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_scholar',
      ('%scustom/' % base_dir)],
 ]
 
@@ -398,14 +390,14 @@ def create_lc_sim(best_sims, indexes):
     rs = []
     for i in range(len(indexes)):
         s1, s2 = generate_samples(indexes)
-        left_index = indexes[i][0] -1
-        right_index = indexes[i][1] -1
+        #left_index = indexes[i][0] -1
+        #right_index = indexes[i][1] -1
         lambdas = []
         for j in range(len(best_sims[i])):
             localsim = best_sims[i][j][0]
             localweight = best_sims[i][j][1]
             #print(f'on {left_index},{right_index}: {localsim} w:{localweight}')
-            sim_lambda = lambda t1, t2: localsim(t1[left_index], t2[right_index])[0] * localweight
+            sim_lambda = lambda t1, t2: localsim(t1[i], t2[i])[0] * localweight
             lambdas.append(sim_lambda)
             try:
                 print(f'trying {sim_lambda(s1,s2)}')
@@ -418,6 +410,7 @@ def create_lc_sim(best_sims, indexes):
             pass
         rs.append(aggr)
     finalf = lambda t1, t2: [np.sum(np.array([r(t1, t2) for r in rs]))/len(rs)]
+    print(f' final {finalf(s1, s2)}')
     return finalf
 
 
@@ -436,12 +429,12 @@ for i in range(runs):
         datadir = d[5]
         print(f'---{dataset_name}---')
         allsims = simfunctions.copy()
-        print('finding best linear combination per attribute function')
+        #print('finding best linear combination per attribute function')
         best_sims = bf2(gt_file, t1_file, t2_file, indexes, allsims)
         fsims = []
         ind = 0
         for bsk in best_sims:
-            top_sims_k = bsk[:3]
+            top_sims_k = bsk[:2]
             sw = np.sum(np.array(top_sims_k)[:,1])
             for w in top_sims_k:
                 w[1] = w[1]/sw
@@ -451,12 +444,13 @@ for i in range(runs):
             fsims.append(top_sims_k)
             ind += 1
         generated_sim = create_lc_sim(fsims, indexes)
-        print('finding best single per attribute function')
-        bf_fun = bf(gt_file, t1_file, t2_file, indexes, allsims)
-        generated_sim_single = create_single_sim(bf_fun)
-        allsims = [generated_sim] + [generated_sim_single]
-        print('looking for best function')
-        sf = find_sim(gt_file, t1_file, t2_file, indexes, allsims, 0, 100, 30)
-        for s in sf:
-            print(f'pt with {get_lambda_name(s)}')
-            pretrain(gt_file, t1_file, t2_file, indexes, s, soglia, tot_copy, dataset_name, datadir)
+
+        #print('finding best single per attribute function')
+        #bf_fun = bf(gt_file, t1_file, t2_file, indexes, allsims)
+        #generated_sim_single = create_single_sim(bf_fun)
+        #allsims = [generated_sim]
+        #print('looking for best function')
+        #sf = find_sim(gt_file, t1_file, t2_file, indexes, allsims, 0.01, 100, 30)
+        #for s in sf:
+        #    print(f'pretrain {dataset_name} with {get_lambda_name(s)}')
+        #    pretrain(gt_file, t1_file, t2_file, indexes, s, soglia, tot_copy, dataset_name, datadir)

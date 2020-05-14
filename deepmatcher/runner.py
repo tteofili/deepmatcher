@@ -47,25 +47,27 @@ class Statistics(object):
         self.f10 = 0
         self.start_time = time.time()
 
-    def update(self, loss=0, tps=0, tns=0, fps=0, fns=0, f11=0, f10=0):
+    def update(self, loss=0, tps=0, tns=0, fps=0, fns=0, f10=0, f11=0):
         examples = tps + tns + fps + fns
         self.loss_sum += loss * examples
         self.tps += tps
         self.tns += tns
         self.fps += fps
         self.fns += fns
-        self.f11 += f11
         self.f10 += f10
+        self.f11 += f11
         self.examples += examples
 
     def loss(self):
         return self.loss_sum / self.examples
 
     def f1(self):
-        agg = '('+str(self.f10)+','+str(self.f11)+')'
         prec = self.precision()
         recall = self.recall()
-        return str(2 * prec * recall / max(prec + recall, 1))+agg
+        return 2 * prec * recall / max(prec + recall, 1)
+
+    def f1agg(self):
+        return '(' + str(self.f10) + ',' + str(self.f11) + ')'
 
     def precision(self):
         return 100 * self.tps / max(self.tps + self.fps, 1)
@@ -112,12 +114,13 @@ class Runner(object):
         """Write out epoch statistics to stdout.
         """
         print(('Finished Epoch {epoch} || Run Time: {runtime:6.1f} | '
-               'Load Time: {datatime:6.1f} || F1: {f1:6.2f} | Prec: {prec:6.2f} | '
+               'Load Time: {datatime:6.1f} || F1: {f1:6.2f} | F1-agg: {f1agg}  | Prec: {prec:6.2f} | '
                'Rec: {rec:6.2f} || Ex/s: {eps:6.2f} || Loss: {loss:7.4f}\n').format(
                    epoch=epoch,
                    runtime=runtime,
                    datatime=datatime,
                    f1=stats.f1(),
+                   f1agg=stats.f1agg(),
                    prec=stats.precision(),
                    rec=stats.recall(),
                    eps=stats.examples_per_sec(),
@@ -226,6 +229,7 @@ class Runner(object):
 
         f0 = 0
         f1 = 0
+        nb = len(run_iter)
         for batch_idx, batch in enumerate(run_iter):
             batch_start = time.time()
             datatime += batch_start - batch_end
@@ -252,10 +256,15 @@ class Runner(object):
                 if run_type == 'EVAL' and output.shape[1] == 2:
                     predictions = output.max(1)[1].data
                     report = classification_report(target.int().detach().numpy(), predictions.int().detach().numpy(), output_dict=True)
-                    lf1 = report['1']['f1-score']
-                    lf0 = report['0']['f1-score']
-                    f0 += lf0
-                    f1 += lf1
+                    try:
+                        lf1 = report['1']['f1-score']
+                        lf0 = report['0']['f1-score']
+                        f0 += lf0
+                        f1 += lf1
+                        scores = scores + (lf0/nb,) + (lf1/nb,)
+                    except:
+                        print(report)
+                        pass
             else:
                 scores = [0] * 4
 
@@ -287,13 +296,6 @@ class Runner(object):
 
             batch_end = time.time()
             runtime += batch_end - batch_start
-
-        if run_type == 'EVAL':
-            f0 = f0 / len(run_iter)
-            f1 = f1 / len(run_iter)
-            print("***F1-MATCH-NOMATCH***")
-            print('f1-1:'+str(f1))
-            print('f1-0:'+str(f0))
 
         if progress_style == 'tqdm-bar':
             pbar.close()

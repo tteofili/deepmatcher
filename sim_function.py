@@ -376,6 +376,211 @@ def sim_bf_dirty_acm(stringa1, stringa2):
     return [aver]
 
 
+'''
+
+'''
+def sim_bf2_dda(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1, t2)[0] * 0.54 + sim_cos(t1s, t2s)[0] * 0.46
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_hamming(t1s, t2s)[0] * 0.61 + sim_jacc(t1, t2)[0] * 0.39
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_hamming(t1s, t2s)[0] * 0.53 + sim_cos(t1s, t2s)[0] * 0.47
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_lev(t1, t2)[0] * 0.55 + sim_ngram(t1s, t2s)[0] * 0.45
+
+    vect = [s0, s1, s2, s3]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+'''
+for attributes (1, 1):
+lambda t1, t2: sim_function.sim_cos(t1, t2),, w:0.5341633925104502
+lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),, w:0.46583660748954975
+for attributes (2, 2):
+lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),, w:0.6093156983603861
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.39068430163961393
+for attributes (3, 3):
+lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),, w:0.5303183567307664
+lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),, w:0.4696816432692335
+for attributes (5, 5):
+lambda t1, t2: sim_function.sim_lev(t1, t2),, w:0.5522690126862783
+lambda t1, t2: sim_function.sim_ngram(t1.split(), t2.split()),, w:0.44773098731372174
+'''
+def sim_bf2_fz(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1, t2)[0] * 0.54 + sim_cos(t1s, t2s)[0] * 0.46
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_hamming(t1s, t2s)[0] * 0.61 + sim_jacc(t1, t2)[0] * 0.39
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_hamming(t1s, t2s)[0] * 0.53 + sim_cos(t1s, t2s)[0] * 0.47
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_lev(t1, t2)[0] * 0.55 + sim_ngram(t1s, t2s)[0] * 0.45
+
+    vect = [s0, s1, s2, s3]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+'''
+for attributes (1, 1):
+lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),, w:0.5256530946456764
+lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),, w:0.47434690535432356
+for attributes (2, 2):
+lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),, w:0.5855796779144531
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.4144203220855469
+for attributes (3, 3):
+lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),, w:0.5
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.5
+'''
+def sim_bf2_ab(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1s, t2s)[0] * 0.53 + sim_sodi(t1s, t2s)[0] * 0.47
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_jacc(t1s, t2s)[0] * 0.41 + sim_sodi(t1s, t2s)[0] * 0.59
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_jacc(t1s, t2s)[0] * 0.5 + sim_sodi(t1s, t2s)[0] * 0.5
+
+    vect = [s0, s1, s2]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+'''
+for attributes (5, 9):
+lambda t1, t2: sim_function.sim_ngram(t1.split(), t2.split()),, w:0.5066857340495199
+lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),, w:0.4933142659504801
+for attributes (4, 5):
+lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),, w:0.6126228546335649
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.387377145366435
+for attributes (3, 3):
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.5377744328904933
+lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),, w:0.46222556710950674
+for attributes (14, 4):
+lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.5418688380188083
+lambda t1, t2: sim_function.sim_cos(t1, t2),, w:0.45813116198119175
+for attributes (6, 11):
+lambda t1, t2: sim_function.sim_hamming(t1.split(), t2.split()),, w:0.5367990893535891
+lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),, w:0.46320091064641084
+'''
+def sim_bf2_wa(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_ngram(t1s, t2s)[0] * 0.51 + sim_cos(t1s, t2s)[0] * 0.49
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_hamming(t1s, t2s)[0] * 0.61 + sim_jacc(t1s, t2s)[0] * 0.39
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_jacc(t1s, t2s)[0] * 0.54 + sim_hamming(t1s, t2s)[0] * 0.46
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_jacc(t1s, t2s)[0] * 0.54 + sim_cos(t1, t2)[0] * 0.46
+
+    t1 = stringa1[4]
+    t2 = stringa2[4]
+    t1s = t1.split()
+    t2s = t2.split()
+    s4 = sim_hamming(t1s, t2s)[0] * 0.54 + sim_sodi(t1s, t2s)[0] * 0.46
+
+    vect = [s0, s1, s2, s3, s4]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+'''
+    for attributes (1, 1):
+    lambda t1, t2: sim_function.sim_cos(t1, t2),, w:0.5357183134944616
+    lambda t1, t2: sim_function.sim_cos(t1.split(), t2.split()),, w:0.46428168650553847
+    for attributes (2, 2):
+    lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.5985453914917036
+    lambda t1, t2: sim_function.sim_lev(t1, t2),, w:0.4014546085082964
+    for attributes (3, 3):
+    lambda t1, t2: sim_function.jaro(t1, t2),, w:0.5496137433499761
+    lambda t1, t2: sim_function.sim_cos(t1, t2),, w:0.4503862566500239
+    for attributes (4, 4):
+    lambda t1, t2: sim_function.sim_jacc(t1.split(), t2.split()),, w:0.5938202054812824
+    lambda t1, t2: sim_function.sim_sodi(t1.split(), t2.split()),, w:0.40617979451871755
+
+'''
+def sim_bf2_beers(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1, t2)[0] * 0.54 + sim_cos(t1s, t2s)[0] * 0.46
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_jacc(t1s, t2s)[0] * 0.6 + sim_lev(t1, t2)[0] * 0.4
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = jaro(t1, t2)[0] * 0.55 + sim_cos(t1, t2)[0] * 0.45
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_jacc(t1s, t2s)[0] * 0.6 + sim_sodi(t1s, t2s)[0] * 0.4
+
+    vect = [s0, s1, s2, s3]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
 def sim_bf_beers(stringa1, stringa2):
 
     s0 = sim_cos(stringa1[0], stringa2[0])
@@ -577,6 +782,99 @@ def sim_bf2_ab(stringa1, stringa2):
          + sim_bert(t1, t2)[0] * 0.037 + sim_hamming(t1, t2)[0] * 0.036 + sim_lev(t1s, t2s)[0] * 0.035 + sim_lev(t1, t2)[0] * 0.031'''
 
     vect = [s0, s1, s2]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf2_dds(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1s, t2s)[0]*0.57 + sim_sodi(t1s, t2s)[0]*0.43
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_hamming(t1s, t2s)[0]*0.55 + sim_ngram(t1s, t2s)[0]*0.45
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_jacc(t1, t2)[0]*0.51 + sim_lcs(t1, t2)[0]*0.49
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_sodi(t1s, t2s)[0] * 0.5 + sim_jacc(t1s, t2s)[0] * 0.5
+
+    vect = [s0, s1, s2, s3]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf2_dwa(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_cos(t1s, t2s)[0]*0.53 + sim_sodi(t1s, t2s)[0]*0.46
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_ngram(t1s, t2s)[0]*0.51 + sim_hamming(t1s, t2s)[0]*0.49
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_hamming(t1s, t2s)[0]*0.55 + sim_jacc(t1, t2)[0]*0.45
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_ngram(t1s, t2s)[0] * 0.62 + sim_cos(t1, t2)[0] * 0.37
+
+    t1 = stringa1[4]
+    t2 = stringa2[4]
+    t1s = t1.split()
+    t2s = t2.split()
+    s4 = sim_ngram(t1s, t2s)[0] * 0.5 + sim_sodi(t1s, t2s)[0] * 0.5
+
+    vect = [s0, s1, s2, s3, s4]
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
+
+def sim_bf2_dai(stringa1, stringa2):
+    t1 = stringa1[0]
+    t2 = stringa2[0]
+    t1s = t1.split()
+    t2s = t2.split()
+    s0 = sim_sodi(t1s, t2s)[0]*0.56 + sim_jacc(t1s, t2s)[0]*0.44
+
+    t1 = stringa1[1]
+    t2 = stringa2[1]
+    t1s = t1.split()
+    t2s = t2.split()
+    s1 = sim_jacc(t1s, t2s)[0]*0.53 + sim_ngram(t1s, t2s)[0]*0.47
+
+    t1 = stringa1[2]
+    t2 = stringa2[2]
+    t1s = t1.split()
+    t2s = t2.split()
+    s2 = sim_hamming(t1s, t2s)[0]*0.53 + sim_jacc(t1, t2)[0]*0.47
+
+    t1 = stringa1[3]
+    t2 = stringa2[3]
+    t1s = t1.split()
+    t2s = t2.split()
+    s3 = sim_cos(t1s, t2s)[0] * 0.58 + sim_jacc(t1s, t2s)[0] * 0.42
+
+    vect = [s0, s1, s2, s3]
     aver = round(sum(vect) / len(vect), 2)
     return [aver]
 
