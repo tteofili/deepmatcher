@@ -76,8 +76,7 @@ def bf(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
         lowestMSE = 1e10
         for simf in sim_functions:
             name = get_lambda_name(simf)
-            data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[4])
-            #data = read_data_bf(gt_file, t1_file, t2_file, [k], simfunctions,  simf)
+            data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], simfunctions[4])
             perc = len(data) * 0.05
             split = int(min(perc / 2, 50))
             npdata = np.array(data[:split] + data[-split:])
@@ -108,7 +107,7 @@ def bf2(gt_file, t1_file, t2_file, attr_indexes, sim_functions):
     best = []
     for k in attr_indexes:
         print('getting attribute values')
-        data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], sim_functions[2])
+        data = csv_2_datasetALTERNATE(gt_file, t1_file, t2_file, [k], simfunctions[4])
         perc = len(data) * 0.05
         split = int(min(perc/2, 50))
         npdata = np.array(data[:split] + data[-split:])

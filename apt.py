@@ -343,13 +343,10 @@ soglia = 0.05  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
 runs = 1
 
 datasets = [
-    [('%sdirty_walmart_amazon/all.csv' % base_dir), ('%sdirty_walmart_amazon/tableA.csv' % base_dir),
-     ('%sdirty_walmart_amazon/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], 'dirty_walmart_amazon',
+    [('%sbeers/all.csv' % base_dir), ('%sbeers/tableA.csv' % base_dir),
+     ('%sbeers/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'beers',
      ('%scustom/' % base_dir)],
-    [('%sdirty_amazon_itunes/all.csv' % base_dir), ('%sdirty_amazon_itunes/tableA.csv' % base_dir),
-     ('%sdirty_amazon_itunes/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_amazon_itunes',
-     ('%scustom/' % base_dir)],
-    [('%sdblp_scholar/DBLP-Scholar-perfectMapping.csv' % base_dir), ('%sdblp_scholar/DBLP1.csv' % base_dir),
+    [('%sdblp_scholar/DBLP-Scholar_perfectMapping.csv' % base_dir), ('%sdblp_scholar/DBLP1.csv' % base_dir),
      ('%sdblp_scholar/Scholar.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dblp_scholar',
      ('%scustom/' % base_dir)],
     [('%sdirty_dblp_acm/all.csv' % base_dir), ('%sdirty_dblp_acm/tableA.csv' % base_dir),
@@ -358,9 +355,6 @@ datasets = [
     [('%samazon_google/Amazon_GoogleProducts-perfectMapping.csv' % base_dir),
      ('%samazon_google/AmazonAG.csv' % base_dir),
      ('%sdblp_scholar/amazon_google.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'amazon_google',
-     ('%scustom/' % base_dir)],
-    [('%sbeers/all.csv' % base_dir), ('%sbeers/tableA.csv' % base_dir),
-     ('%sbeers/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'beers',
      ('%scustom/' % base_dir)],
     [('%swalmart_amazon/matches_walmart_amazon.csv' % base_dir), ('%swalmart_amazon/walmart.csv' % base_dir),
      ('%swalmart_amazon/amazonw.csv' % base_dir), [(5, 9), (4, 5),(3, 3),(14, 4),(6, 11)], 'walmart_amazon',
@@ -374,6 +368,12 @@ datasets = [
      ('%scustom/' % base_dir)],
     [('%sdirty_dblp_scholar/all.csv' % base_dir), ('%sdirty_dblp_scholar/tableA.csv' % base_dir),
      ('%sdirty_dblp_scholar/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_scholar',
+     ('%scustom/' % base_dir)],
+    [('%sdirty_walmart_amazon/all.csv' % base_dir), ('%sdirty_walmart_amazon/tableA.csv' % base_dir),
+     ('%sdirty_walmart_amazon/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], 'dirty_walmart_amazon',
+     ('%scustom/' % base_dir)],
+    [('%sdirty_amazon_itunes/all.csv' % base_dir), ('%sdirty_amazon_itunes/tableA.csv' % base_dir),
+     ('%sdirty_amazon_itunes/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_amazon_itunes',
      ('%scustom/' % base_dir)],
 ]
 
@@ -418,6 +418,15 @@ def create_single_sim(bf_fun):
     per_att_sim = lambda t1, t2: [np.sum(np.array([bf_fun[i](t1[i], t2[i]) for i in range(len(bf_fun))]))/len(bf_fun)]
     return per_att_sim
 
+def agg_sim(best_sims, t1, t2):
+    vect = []
+    for i in range(len(t1)):
+        att_sim = 0
+        for j in range(len(best_sims[i])):
+            att_sim += best_sims[i][j][0](t1[i], t2[i])[0] * best_sims[i][j][1]
+        vect.append(att_sim)
+    aver = round(sum(vect) / len(vect), 2)
+    return [aver]
 
 for i in range(runs):
     for d in datasets:
@@ -429,7 +438,7 @@ for i in range(runs):
         datadir = d[5]
         print(f'---{dataset_name}---')
         allsims = simfunctions.copy()
-        #print('finding best linear combination per attribute function')
+        print('finding best linear combination per attribute function')
         best_sims = bf2(gt_file, t1_file, t2_file, indexes, allsims)
         fsims = []
         ind = 0
@@ -443,14 +452,13 @@ for i in range(runs):
                 print(f'{get_lambda_name(bsa[0])}, w:{bsa[1]}')
             fsims.append(top_sims_k)
             ind += 1
-        generated_sim = create_lc_sim(fsims, indexes)
-
-        #print('finding best single per attribute function')
-        #bf_fun = bf(gt_file, t1_file, t2_file, indexes, allsims)
-        #generated_sim_single = create_single_sim(bf_fun)
-        #allsims = [generated_sim]
-        #print('looking for best function')
-        #sf = find_sim(gt_file, t1_file, t2_file, indexes, allsims, 0.01, 100, 30)
-        #for s in sf:
-        #    print(f'pretrain {dataset_name} with {get_lambda_name(s)}')
-        #    pretrain(gt_file, t1_file, t2_file, indexes, s, soglia, tot_copy, dataset_name, datadir)
+        generated_sim = lambda t1, t2: agg_sim(fsims, t1, t2)
+        print('finding best single per attribute function')
+        bf_fun = bf(gt_file, t1_file, t2_file, indexes, allsims)
+        generated_sim_single = create_single_sim(bf_fun)
+        allsims = [generated_sim]
+        print('looking for best function')
+        sf = find_sim(gt_file, t1_file, t2_file, indexes, allsims, 0.01, 100, 30)
+        for s in sf:
+           print(f'pretrain {dataset_name} with {get_lambda_name(s)}')
+           pretrain(gt_file, t1_file, t2_file, indexes, s, soglia, tot_copy, dataset_name, datadir)

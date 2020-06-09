@@ -324,20 +324,30 @@ TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/amazonw.csv
 ATT_INDEXES = [(5, 9), (4, 5),(3, 3),(14, 4), (6, 11)]'''
 
 
-DATASET_NAME = 'dirty_walmart_amazon'
+'''DATASET_NAME = 'dirty_walmart_amazon'
 GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
 TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
 TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
 ATT_INDEXES = [(1, 1), (2, 2),(3, 3),(4, 4), (5, 5)]
 
-
 simf = lambda a, b: sim_function.sim_bf2_dwa(a, b)
 funsimstr = "sim_bf2_dwa"
+
+'''
+
+DATASET_NAME = 'beers'
+GROUND_TRUTH_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/all.csv'
+TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
+TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
+ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
+
+simf = lambda a, b: sim_function.sim_bf2_beers(a, b)
+funsimstr = "sim_bf2_beers"
 
 
 tot_pt = 2000  # dimensione dataset pre_training
 tot_copy = 900 # numero di elementi generati con edit distance
 soglia = 0.1  # da aggiungere per discostarsi da min_sim e max_sim ottenuto
-runs = 1
+runs = 5
 for i in range(runs):
     training(GROUND_TRUTH_FILE, TABLE1_FILE, TABLE2_FILE, ATT_INDEXES, simf, soglia, tot_copy)
