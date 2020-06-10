@@ -66,8 +66,19 @@ class Statistics(object):
         recall = self.recall()
         return 2 * prec * recall / max(prec + recall, 1)
 
+    def f1NM(self):
+        prec = self.precisionNM()
+        recall = self.recallNM()
+        return 2 * prec * recall / max(prec + recall, 1)
+
     def f1agg(self):
         return '(' + str(self.f10) + ',' + str(self.f11) + ')'
+
+    def precisionNM(self):
+        return 100 * self.tns / max(self.tns + self.fns, 1)
+
+    def recallNM(self):
+        return 100 * self.tns / max(self.tns + self.fps, 1)
 
     def precision(self):
         return 100 * self.tps / max(self.tps + self.fps, 1)
@@ -307,7 +318,7 @@ class Runner(object):
         if return_predictions:
             return predictions
         else:
-            return cum_stats.f1()
+            return cum_stats
 
     @staticmethod
     def train(model,
@@ -380,7 +391,7 @@ class Runner(object):
             Runner._run(
                 'TRAIN', model, train_dataset, criterion, optimizer, train=True, **kwargs)
 
-            score = Runner._run('EVAL', model, validation_dataset, train=False, **kwargs)
+            score = Runner._run('EVAL', model, validation_dataset, train=False, **kwargs).f1()
 
             optimizer.update_learning_rate(score, epoch + 1)
             model.optimizer_state = optimizer.base_optimizer.state_dict()

@@ -35,7 +35,7 @@ def process(*args, **kwargs):
     return data_process(*args, **kwargs)
 
 
-__version__ = '0.1.2'
+__version__ = '0.1.1-pt'
 __author__ = 'Sidharth Mudgal, Han Li'
 
 __all__ = [
