@@ -320,21 +320,7 @@ def pretrain(gt_file, t1_file, t2_file, indexes, simf, soglia, tot_copy, dataset
         trainK(kappa[i], data, min_sim, max_sim, t1_file, t2_file, indexes, dataset_name, datadir, simf)
 
 
-base_dir = '/home/tteofili/Downloads/dataset/'
-'''
-DATASET_NAME = 'fodo_zaga'
-GROUND_TRUTH_FILE = '%s' + DATASET_NAME + '/matches_fodors_zagats.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/fodors.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/zagats.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3),(4,4), (5, 5), (6, 6)]
-''' % base_dir
-
-'''DATASET_NAME = 'dirty_dblp_scholar'
-GROUND_TRUTH_FILE = '%s' + DATASET_NAME + '/all.csv'
-TABLE1_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableA.csv'
-TABLE2_FILE = '/home/tteofili/Downloads/dataset/' + DATASET_NAME + '/tableB.csv'
-ATT_INDEXES = [(1, 1), (2, 2), (3, 3), (4, 4)]
-''' % base_dir
+base_dir = '../piper/datasets/'
 
 
 tot_pt = 2000  # dimensione dataset pre_training
@@ -345,36 +331,36 @@ runs = 1
 datasets = [
     [('%sbeers/all.csv' % base_dir), ('%sbeers/tableA.csv' % base_dir),
      ('%sbeers/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'beers',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sdblp_scholar/DBLP-Scholar_perfectMapping.csv' % base_dir), ('%sdblp_scholar/DBLP1.csv' % base_dir),
      ('%sdblp_scholar/Scholar.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dblp_scholar',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sdirty_dblp_acm/all.csv' % base_dir), ('%sdirty_dblp_acm/tableA.csv' % base_dir),
      ('%sdirty_dblp_acm/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_acm',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%samazon_google/Amazon_GoogleProducts-perfectMapping.csv' % base_dir),
      ('%samazon_google/AmazonAG.csv' % base_dir),
      ('%sdblp_scholar/amazon_google.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'amazon_google',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%swalmart_amazon/matches_walmart_amazon.csv' % base_dir), ('%swalmart_amazon/walmart.csv' % base_dir),
      ('%swalmart_amazon/amazonw.csv' % base_dir), [(5, 9), (4, 5),(3, 3),(14, 4),(6, 11)], 'walmart_amazon',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sabt_buy_anhai/all.csv' % base_dir), ('%sabt_buy_anhai/tableA.csv' % base_dir),
      ('%sabt_buy_anhai/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3)], 'abt_buy_anhai',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sfodo_zaga/matches_fodors_zagats.csv' % base_dir),
      ('%sfodo_zaga/fodors.csv' % base_dir),
      ('%sfodo_zaga/zagats.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (5, 5)], 'fodo_zaga',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sdirty_dblp_scholar/all.csv' % base_dir), ('%sdirty_dblp_scholar/tableA.csv' % base_dir),
      ('%sdirty_dblp_scholar/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_dblp_scholar',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sdirty_walmart_amazon/all.csv' % base_dir), ('%sdirty_walmart_amazon/tableA.csv' % base_dir),
      ('%sdirty_walmart_amazon/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], 'dirty_walmart_amazon',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
     [('%sdirty_amazon_itunes/all.csv' % base_dir), ('%sdirty_amazon_itunes/tableA.csv' % base_dir),
      ('%sdirty_amazon_itunes/tableB.csv' % base_dir), [(1, 1), (2, 2), (3, 3), (4, 4)], 'dirty_amazon_itunes',
-     ('%scustom/' % base_dir)],
+     ('%spretraining/' % base_dir)],
 ]
 
 def generate_samples(indexes):

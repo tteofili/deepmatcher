@@ -38,7 +38,7 @@ class Statistics(object):
 
     def __init__(self):
         self.loss_sum = 0
-        self.examples = 0
+        self.examples = 1e-10
         self.tps = 0
         self.tns = 0
         self.fps = 0

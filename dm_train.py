@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import collections
 
-datadir = '/home/tteofili/Downloads/dataset/custom/'
+datadir = '../piper/datasets/pretraining/'
 
 
 def join(train1, valid1, test1, train2, valid2, name):

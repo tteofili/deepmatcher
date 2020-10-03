@@ -979,7 +979,7 @@ tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', do_lower_case=Fal
 model = AutoModel.from_pretrained('bert-base-uncased')
 embedder = SentenceTransformer('bert-base-nli-mean-tokens')
 
-PATH = "/home/tteofili/Downloads/"
+PATH = "."
 model.save_pretrained(PATH)
 tokenizer.save_pretrained(PATH)
 embedding = models.BERT(PATH, max_seq_length=128,do_lower_case=True)
